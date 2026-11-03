@@ -1,0 +1,1780 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Diwali surprise for you | Diwali Wish Machine</title>
+<meta name="description" content="Light a diya and watch fireworks spell your name. A personal Diwali wish, made with the free Diwali Wish Machine.">
+<meta property="og:title" content="A Diwali surprise is waiting for you">
+<meta property="og:description" content="Tap to light your diya and watch fireworks spell your name.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#0b0a24">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600&family=Yatra+One&display=swap">
+<style>
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* Layout: an illuminated festival page. Marigold toran and string lights hang from the top, lamps swing at the sides, every step sits in a gold-framed jaali panel, and customer messages look like WhatsApp bubbles. A second full-screen scene is the personal wish page. */
+:root {
+  --bg: #0b0a24;
+  --panel: rgba(24, 19, 74, 0.7);
+  --field: rgba(7, 6, 30, 0.8);
+  --gold: #f4c95d;
+  --gold-deep: #d99a2b;
+  --saffron: #ff8a3d;
+  --magenta: #e6458f;
+  --ink: #f7efdf;
+  --muted: #b7b1d9;
+  --line: rgba(244, 201, 93, 0.3);
+  --wa: #25d366;
+  --warn: #ff9a8a;
+  --display: "Yatra One", "Noto Serif Devanagari", Georgia, serif;
+  --body: "Hind", "Noto Sans Devanagari", "Segoe UI", system-ui, sans-serif;
+  --jaali: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23f4c95d' stroke-opacity='.16' stroke-width='1'%3E%3Ccircle cx='22' cy='0' r='22'/%3E%3Ccircle cx='22' cy='44' r='22'/%3E%3Ccircle cx='0' cy='22' r='22'/%3E%3Ccircle cx='44' cy='22' r='22'/%3E%3C/g%3E%3C/svg%3E");
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; position: relative;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(900px 560px at 50% -6%, #3a2a9a 0%, transparent 62%),
+    radial-gradient(760px 460px at 100% 42%, rgba(230, 69, 143, 0.16) 0%, transparent 60%),
+    radial-gradient(760px 460px at 0% 72%, rgba(255, 138, 61, 0.14) 0%, transparent 60%);
+  background-attachment: fixed;
+  color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; overflow-x: hidden;
+}
+body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: var(--jaali); -webkit-mask-image: radial-gradient(ellipse at 50% 25%, #000 0, transparent 80%); mask-image: radial-gradient(ellipse at 50% 25%, #000 0, transparent 80%); }
+.wrap {
+  max-width: 900px; margin: 0 auto; padding-block: 0 56px; position: relative; z-index: 2; overflow-x: clip;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+[hidden] { display: none !important; }
+body.recipient .wrap, body.recipient .jhumar, body.recipient .toran-wrap { display: none; }
+canvas.layer { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#bg { z-index: 1; }
+#fx { z-index: 80; }
+body.greet-on #bg { z-index: 71; }
+.bokeh { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.bokeh i { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(255, 170, 70, 0.32), rgba(255, 170, 70, 0) 68%); animation: drift 28s ease-in-out infinite alternate; }
+.bokeh i:nth-child(1) { width: 380px; height: 380px; left: -90px; top: 16%; }
+.bokeh i:nth-child(2) { width: 300px; height: 300px; right: -60px; top: 8%; background: radial-gradient(circle, rgba(230, 69, 143, 0.26), transparent 68%); animation-duration: 34s; }
+.bokeh i:nth-child(3) { width: 420px; height: 420px; right: 8%; top: 52%; animation-duration: 40s; }
+.bokeh i:nth-child(4) { width: 260px; height: 260px; left: 12%; top: 64%; background: radial-gradient(circle, rgba(179, 136, 255, 0.24), transparent 68%); animation-duration: 31s; }
+@keyframes drift { to { transform: translate(60px, -90px) scale(1.18); } }
+.floor-glow { position: fixed; left: 0; right: 0; bottom: 0; height: 170px; z-index: 1; pointer-events: none; background: radial-gradient(60% 100% at 50% 100%, rgba(255, 150, 60, 0.24), transparent 70%); }
+
+/* TORAN + LIGHTS */
+.toran-wrap { position: absolute; top: 0; left: 0; right: 0; height: clamp(112px, 12.5vw, 176px); z-index: 4; pointer-events: none; overflow: hidden; }
+.toran-wrap svg, .greet-toran svg { width: 100%; height: 100%; display: block; }
+.sway { transform-box: fill-box; transform-origin: 50% 0; animation: sway var(--sd, 6s) ease-in-out var(--sdel, 0s) infinite alternate; }
+@keyframes sway { from { transform: rotate(-0.7deg); } to { transform: rotate(0.7deg); } }
+.bulb, .halo { animation: twinkle var(--bd, 1.6s) ease-in-out infinite alternate; }
+.halo { opacity: 0.25; }
+@keyframes twinkle { from { opacity: 0.4; } to { opacity: 1; } }
+.jhumar { position: absolute; top: 0; width: 84px; z-index: 3; display: none; transform-origin: 50% 0; animation: swing 4.6s ease-in-out infinite alternate; pointer-events: none; }
+.jhumar.l { left: max(8px, calc(50% - 640px)); }
+.jhumar.r { right: max(8px, calc(50% - 640px)); animation-delay: -2.3s; }
+.jhumar .chain { width: 2px; margin: 0 auto; height: 150px; background: repeating-linear-gradient(180deg, #d99a2b 0 6px, #7a4a0c 6px 9px); }
+.jhumar .chain.short { height: 70px; }
+.jhumar .diya { width: 74px; height: 74px; margin: 0 auto; }
+@keyframes swing { from { transform: rotate(-3.5deg); } to { transform: rotate(3.5deg); } }
+@media (min-width: 1240px) { .jhumar { display: block; } }
+
+/* HERO */
+.hero { position: relative; overflow-x: clip; text-align: center; padding: clamp(128px, 14vw, 190px) 0 30px; }
+.mandala { position: absolute; left: 50%; top: 56%; width: min(640px, 135vw); aspect-ratio: 1; transform: translate(-50%, -50%); opacity: 0.4; pointer-events: none; z-index: 0; }
+.mandala svg, .g-rangoli svg { width: 100%; height: 100%; display: block; animation: spin 130s linear infinite; }
+.stroke { stroke-linecap: round; animation: draw 2.4s var(--d, 0s) ease-out both; }
+.stroke.soft { animation: draw 2.4s var(--d, 0s) ease-out both, fillin 1.8s calc(var(--d, 0s) + 1.4s) ease-out both; }
+.rs { stroke-linecap: round; }
+@keyframes draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes fillin { from { fill-opacity: 0; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.hero-inner { position: relative; z-index: 1; }
+.eyebrow { font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin: 0 0 6px; }
+.eyebrow b { font-family: var(--display); font-weight: 400; letter-spacing: 0.04em; text-transform: none; font-size: clamp(22px, 5vw, 30px); display: block; margin-bottom: 4px; color: var(--saffron); text-shadow: 0 0 24px rgba(255, 138, 61, 0.6); }
+h1 {
+  font-family: var(--display); font-weight: 400; margin: 0; text-wrap: balance; font-size: clamp(44px, 10vw, 84px); line-height: 1.04;
+  background: linear-gradient(100deg, #ffe9a6 0%, #f4c95d 28%, #fff7d6 50%, #e08a2b 72%, #ffe9a6 100%); background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: var(--gold);
+  animation: shimmer 7s linear infinite; filter: drop-shadow(0 4px 26px rgba(255, 150, 50, 0.4));
+}
+@keyframes shimmer { to { background-position: -220% 0; } }
+.lede { max-width: 560px; margin: 14px auto 16px; color: #ece5fb; font-size: 18px; text-wrap: balance; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 0 0 24px; padding: 0; list-style: none; }
+.chips li { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line); background: rgba(244, 201, 93, 0.09); font-size: 13.5px; color: #ffe9a6; }
+.countdown { display: inline-flex; gap: 10px; }
+.cd-cell { min-width: 70px; padding: 12px 6px 8px; border: 1.5px solid rgba(244, 201, 93, 0.55); border-radius: 40px 40px 14px 14px; background: linear-gradient(180deg, rgba(70, 48, 160, 0.6), rgba(11, 10, 36, 0.85)); box-shadow: inset 0 0 16px rgba(244, 201, 93, 0.14), 0 0 22px rgba(255, 150, 50, 0.14); }
+.cd-cell b { display: block; font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.1; color: var(--gold); font-variant-numeric: tabular-nums; }
+.cd-cell span { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.cd-note { margin: 12px 0 0; font-size: 13.5px; color: var(--muted); }
+.cd-done { font-family: var(--display); font-size: 28px; color: var(--gold); margin: 0; }
+
+/* PANELS */
+.panel {
+  position: relative; margin-top: 30px; padding: 34px 26px 28px; border-radius: 26px;
+  background: linear-gradient(180deg, rgba(36, 27, 112, 0.78), rgba(17, 13, 58, 0.86));
+  border: 1px solid rgba(244, 201, 93, 0.6);
+  box-shadow: inset 0 0 0 6px rgba(13, 10, 48, 0.92), inset 0 0 0 7px rgba(244, 201, 93, 0.3), 0 26px 60px rgba(3, 2, 20, 0.55), 0 0 70px rgba(255, 150, 50, 0.07);
+  backdrop-filter: blur(8px);
+}
+.panel::before { content: ""; position: absolute; inset: 9px; border-radius: 19px; pointer-events: none; background-image: var(--jaali); opacity: 0.55; -webkit-mask-image: linear-gradient(180deg, #000, transparent 45%); mask-image: linear-gradient(180deg, #000, transparent 45%); }
+.panel > * { position: relative; }
+.corner { position: absolute !important; width: 50px; height: 50px; color: var(--gold); pointer-events: none; z-index: 1; }
+.corner svg { width: 100%; height: 100%; display: block; }
+.corner.tl { top: 5px; left: 5px; }
+.corner.tr { top: 5px; right: 5px; transform: rotate(90deg); }
+.corner.br { bottom: 5px; right: 5px; transform: rotate(180deg); }
+.corner.bl { bottom: 5px; left: 5px; transform: rotate(270deg); }
+.panel-head { text-align: center; margin-bottom: 22px; }
+.lotus { width: 70px; height: 44px; display: block; margin: 0 auto; filter: drop-shadow(0 0 10px rgba(244, 201, 93, 0.5)); }
+.step-eyebrow { letter-spacing: 0.32em; font-size: 12px; text-transform: uppercase; color: var(--saffron); margin: 8px 0 2px; }
+.panel h2 { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 5vw, 34px); margin: 0; line-height: 1.2; color: #fff3cf; text-shadow: 0 0 22px rgba(244, 201, 93, 0.35); }
+.hint { margin: 6px auto 0; max-width: 560px; color: var(--muted); font-size: 15px; text-wrap: balance; }
+.orn { height: 14px; margin: 14px auto 0; max-width: 360px; position: relative; }
+.orn::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, rgba(244, 201, 93, 0.8), transparent); }
+.orn::after { content: ""; position: absolute; left: 50%; top: 50%; width: 9px; height: 9px; transform: translate(-50%, -50%) rotate(45deg); background: var(--gold); box-shadow: 0 0 12px rgba(244, 201, 93, 0.9), -18px 0 0 -2px rgba(244, 201, 93, 0.7), 18px 0 0 -2px rgba(244, 201, 93, 0.7); }
+.garland { height: 26px; margin: 22px auto 0; max-width: 520px; position: relative; -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
+.garland::before { content: ""; position: absolute; left: 0; right: 0; top: 12px; height: 2px; background: #c98a1a; }
+.garland::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 11px 13px, #ffb703 0 4px, #ff7b00 4.5px 8px, transparent 8.5px) 0 0 / 22px 26px repeat-x; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.field.full { grid-column: 1 / -1; }
+label, legend { font-size: 13.5px; font-weight: 500; color: #efe6c8; padding: 0; letter-spacing: 0.02em; }
+.opt { color: var(--muted); font-weight: 400; }
+input[type="text"], input[type="date"], input[type="tel"], textarea {
+  width: 100%; font: inherit; color: var(--ink); min-height: 48px; padding: 12px 14px; border-radius: 14px;
+  background: linear-gradient(180deg, rgba(5, 4, 24, 0.9), rgba(16, 12, 52, 0.85));
+  border: 1px solid rgba(244, 201, 93, 0.28); border-bottom: 2px solid rgba(244, 201, 93, 0.55); box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.45);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+input::placeholder, textarea::placeholder { color: #7d78a8; }
+input:focus, textarea:focus { border-color: var(--gold); box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.45), 0 0 0 3px rgba(244, 201, 93, 0.2), 0 0 24px rgba(244, 201, 93, 0.14); outline: none; }
+button:focus-visible, a:focus-visible, .seg input:focus-visible + span { outline: 2px solid var(--gold); outline-offset: 2px; }
+textarea { resize: vertical; line-height: 1.55; }
+#paste { min-height: 190px; font-size: 15px; font-variant-numeric: tabular-nums; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.seg label { position: relative; font-size: 15px; font-weight: 500; }
+.seg input { position: absolute; opacity: 0; inset: 0; }
+.seg span { display: block; padding: 10px 18px; min-height: 44px; border-radius: 999px; border: 1px solid rgba(244, 201, 93, 0.35); background: var(--field); color: var(--ink); cursor: pointer; transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
+.seg input:checked + span { background: linear-gradient(180deg, #ffe08a, #e9a93a); color: #2a1606; border-color: transparent; box-shadow: 0 0 20px rgba(244, 201, 93, 0.45); }
+.check { display: flex; align-items: center; gap: 10px; font-size: 14.5px; color: #efe6c8; min-height: 44px; cursor: pointer; }
+.check input { width: 20px; height: 20px; accent-color: var(--gold); flex: none; }
+.sub { grid-column: 1 / -1; margin: 0; font-size: 13.5px; color: var(--muted); }
+
+/* BUTTONS */
+.btn {
+  font: inherit; font-weight: 600; font-size: 15px; min-height: 46px; padding: 10px 20px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(244, 201, 93, 0.45); background: rgba(244, 201, 93, 0.09); color: var(--gold);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; position: relative; overflow: hidden;
+  transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
+}
+.btn:hover { background: rgba(244, 201, 93, 0.18); }
+.btn:active { transform: scale(0.97); }
+.btn-gold { background: linear-gradient(180deg, #ffe590, #e49a2c); color: #2a1606; border-color: transparent; box-shadow: 0 6px 30px rgba(244, 170, 60, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+.btn-gold:hover { background: linear-gradient(180deg, #fff0b8, #f0a936); box-shadow: 0 8px 40px rgba(255, 180, 70, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+.btn-gold::after { content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.6), transparent); transform: skewX(-20deg); animation: sweep 3.6s ease-in-out infinite; pointer-events: none; }
+@keyframes sweep { 0%, 55% { left: -60%; } 100% { left: 140%; } }
+.btn-big { min-height: 60px; font-size: 19px; padding: 14px 30px; width: 100%; max-width: 440px; }
+.btn-wa { background: linear-gradient(180deg, #34e07a, #1fb457); color: #04210f; border-color: transparent; box-shadow: 0 4px 18px rgba(37, 211, 102, 0.3); }
+.btn-wa:hover { background: linear-gradient(180deg, #4cf08c, #25c761); }
+.btn-ghost { border-color: rgba(183, 177, 217, 0.4); color: var(--ink); background: transparent; }
+.btn.small { min-height: 40px; padding: 6px 14px; font-size: 14px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.row.center-row { justify-content: center; }
+
+/* STATUS */
+.status { margin: 14px 0 0; font-size: 15px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: 14px; font-weight: 500; background: rgba(244, 201, 93, 0.14); color: var(--gold); }
+.pill.warn { background: rgba(255, 154, 138, 0.14); color: var(--warn); }
+.issues { margin: 10px 0 0; padding: 0; list-style: none; font-size: 14px; color: var(--warn); display: grid; gap: 3px; }
+.issues li { overflow-wrap: anywhere; }
+.center { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.extras { display: grid; gap: 4px; justify-items: center; width: 100%; max-width: 560px; }
+.extras .field { width: 100%; }
+.extras[hidden], #baseField[hidden] { display: none; }
+
+/* PROGRESS + DIYAS */
+#results[hidden] { display: none; }
+.progress { margin: 6px 0 18px; padding: 18px 16px 14px; border-radius: 20px; background: radial-gradient(120% 140% at 50% 100%, rgba(255, 150, 60, 0.14), transparent 70%), rgba(7, 6, 30, 0.55); border: 1px solid rgba(244, 201, 93, 0.25); }
+.progress-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.progress-top strong { font-family: var(--display); font-weight: 400; font-size: 24px; color: var(--gold); }
+.progress-top span { color: var(--muted); font-size: 14px; }
+.diyas { display: flex; flex-wrap: wrap; gap: 2px 4px; justify-content: center; }
+.diya { width: 46px; height: 46px; flex: none; }
+.diya-svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.bowl { transition: filter 0.6s; filter: brightness(0.5) saturate(0.7); }
+.flame, .flame2, .glow { opacity: 0; transition: opacity 0.6s; }
+.diya.lit .bowl, .lit-static .bowl { filter: none; }
+.diya.lit .flame, .diya.lit .flame2, .diya.lit .glow, .lit-static .flame, .lit-static .flame2, .lit-static .glow { opacity: 1; }
+.flame, .flame2 { transform-box: fill-box; transform-origin: 50% 100%; }
+.diya.lit .flame, .lit-static .flame { animation: flick var(--dur, 1.4s) ease-in-out var(--del, 0s) infinite alternate; }
+.diya.lit .flame2, .lit-static .flame2 { animation: flick2 var(--dur, 1.4s) ease-in-out var(--del, 0s) infinite alternate; }
+.diya.lit .glow, .lit-static .glow { animation: pulse calc(var(--dur, 1.4s) * 1.3) ease-in-out var(--del, 0s) infinite alternate; }
+@keyframes flick { 0% { transform: scale(1, 1) rotate(-2deg); } 45% { transform: scale(0.93, 1.09) rotate(1.6deg); } 100% { transform: scale(1.06, 0.94) rotate(-1deg); } }
+@keyframes flick2 { 0% { transform: scale(1, 1); } 100% { transform: scale(0.88, 1.12); } }
+@keyframes pulse { from { opacity: 0.65; } to { opacity: 1; } }
+.bar { margin-top: 10px; height: 6px; border-radius: 6px; background: rgba(244, 201, 93, 0.14); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--saffron), var(--gold)); transition: width 0.5s; }
+
+/* CARDS */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 18px; margin-top: 18px; }
+.card { min-width: 0; padding: 16px; border-radius: 22px; background: linear-gradient(180deg, rgba(30, 22, 92, 0.7), rgba(9, 8, 34, 0.8)); border: 1px solid rgba(244, 201, 93, 0.32); box-shadow: inset 0 0 0 4px rgba(10, 8, 40, 0.9), inset 0 0 0 5px rgba(244, 201, 93, 0.16); display: flex; flex-direction: column; gap: 10px; transition: border-color 0.3s; animation: rise 0.5s ease-out both; }
+.card.sent { border-color: rgba(244, 201, 93, 0.85); box-shadow: inset 0 0 0 4px rgba(10, 8, 40, 0.9), inset 0 0 0 5px rgba(244, 201, 93, 0.45), 0 0 34px rgba(244, 201, 93, 0.18); }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+.card-head { display: flex; align-items: center; gap: 12px; }
+.avatar { flex: none; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font-family: var(--display); font-size: 20px; color: #2a1606; background: radial-gradient(circle at 50% 50%, rgba(22, 16, 70, 0.95) 55%, rgba(244, 201, 93, 0.5) 100%); border: 1.5px solid rgba(244, 201, 93, 0.7); box-shadow: 0 0 16px rgba(244, 201, 93, 0.25); overflow: hidden; }
+.avatar svg { width: 100%; height: 100%; display: block; }
+.avatar.big { width: 72px; height: 72px; }
+.who { min-width: 0; flex: 1; }
+.who strong { display: block; font-family: var(--display); font-weight: 400; font-size: 19px; overflow-wrap: anywhere; line-height: 1.25; color: #fff3cf; }
+.who small { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.sent-chip { display: none; font-size: 12px; font-weight: 600; color: #2a1606; background: var(--gold); padding: 3px 10px; border-radius: 999px; }
+.card.sent .sent-chip { display: inline-block; }
+.bubble { position: relative; border-radius: 18px 18px 4px 18px; background: linear-gradient(180deg, #0b5a4a, #06453a); border: 1px solid rgba(37, 211, 102, 0.38); padding: 4px 6px 24px; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35); margin-right: 8px; }
+.bubble::after { content: ""; position: absolute; right: -8px; bottom: 0; width: 14px; height: 16px; background: #06453a; clip-path: polygon(0 0, 100% 100%, 0 100%); }
+.bubble textarea { background: transparent; border: 0; border-bottom: 0; box-shadow: none; color: #eafff4; min-height: 190px; padding: 10px 10px 6px; font-size: 15px; line-height: 1.55; }
+.bubble textarea:focus { box-shadow: none; }
+.bubble .tick { position: absolute; right: 12px; bottom: 5px; font-size: 11px; color: #7fe0b0; }
+.card.sent .bubble { opacity: 0.75; }
+.card-meta { font-size: 12.5px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+.card-meta .over { color: var(--warn); }
+.card-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.card-actions .btn { flex: 1 1 auto; }
+.note { margin: 18px 0 0; padding: 12px 14px; border-radius: 14px; font-size: 13.5px; color: #d9d2f0; background: rgba(244, 201, 93, 0.07); border: 1px dashed rgba(244, 201, 93, 0.35); }
+.manual { margin-top: 12px; }
+.manual[hidden] { display: none; }
+.foot { margin-top: 40px; text-align: center; color: var(--muted); font-size: 13.5px; }
+.foot-diyas { display: flex; justify-content: center; align-items: flex-end; gap: 8px; margin-bottom: 14px; }
+.foot-diyas .diya { width: 56px; height: 56px; }
+.foot-diyas .diya:nth-child(even) { transform: translateY(-8px) scale(0.85); }
+.foot p { margin: 4px 0; }
+
+.toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 30px); z-index: 120; background: #fff4d6; color: #2a1606; padding: 11px 20px; border-radius: 999px; font-weight: 600; font-size: 14.5px; opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s; max-width: min(92vw, 460px); text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.lantern { position: fixed; z-index: 90; width: 42px; height: 68px; pointer-events: none; margin: -34px 0 0 -21px; filter: drop-shadow(0 0 12px rgba(255, 160, 60, 0.85)); }
+
+/* SEND MODE */
+.sendmode { position: fixed; inset: 0; z-index: 66; overflow-y: auto; background: radial-gradient(ellipse at 50% 100%, #4a2a8a 0%, #1a1252 45%, #0a0828 100%); padding: 20px max(16px, env(safe-area-inset-right, 0px)) 40px max(16px, env(safe-area-inset-left, 0px)); }
+.sendmode[hidden] { display: none; }
+.sm-box { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+.sm-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.sm-top strong { font-family: var(--display); font-weight: 400; font-size: 22px; color: var(--gold); }
+.sm-who { display: flex; align-items: center; gap: 14px; }
+.sm-who h3 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 26px; color: #fff3cf; overflow-wrap: anywhere; }
+.sm-who small { color: var(--muted); font-variant-numeric: tabular-nums; }
+.sm-hint { margin: 0; text-align: center; color: var(--muted); font-size: 14px; }
+.sendmode .btn-big { align-self: center; }
+
+/* FINALE */
+.finale { position: fixed; inset: 0; z-index: 75; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 50% 45%, rgba(20, 14, 70, 0.86), rgba(5, 4, 22, 0.94)); }
+.finale[hidden] { display: none; }
+.finale-box { text-align: center; max-width: 540px; animation: pop 0.8s cubic-bezier(0.2, 1.2, 0.3, 1) both; }
+.finale h2 { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 11vw, 84px); line-height: 1.05; margin: 0 0 12px; color: var(--gold); text-shadow: 0 0 22px rgba(255, 190, 70, 0.9), 0 0 70px rgba(255, 130, 40, 0.65); }
+.finale p { font-size: 18px; color: #f1e8ff; margin: 0 0 22px; }
+@keyframes pop { from { opacity: 0; transform: scale(0.7); } }
+
+/* WISH PAGE (the personal greeting) */
+.greet { position: fixed; inset: 0; z-index: 70; overflow-y: auto; overflow-x: hidden; background: radial-gradient(ellipse at 50% 108%, #6a34b4 0%, #2d1b80 30%, #130e48 62%, #080620 100%); }
+.greet[hidden] { display: none; }
+.greet-toran { position: absolute; top: 0; left: 0; right: 0; height: clamp(112px, 12.5vw, 176px); pointer-events: none; z-index: 3; }
+.g-rangoli { position: fixed; left: 50%; bottom: -20vmin; width: min(112vmin, 940px); aspect-ratio: 1; transform: translateX(-50%); opacity: 0.4; pointer-events: none; z-index: 0; }
+.greet-scene { position: relative; min-height: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; padding: clamp(124px, 16vw, 200px) 18px 70px; }
+.greet-scene > * { position: relative; z-index: 1; }
+.g-preview { position: fixed; top: calc(8px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); z-index: 6; width: min(92vw, 560px); display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 8px 6px 16px; border-radius: 999px; background: rgba(10, 8, 40, 0.85); border: 1px solid var(--line); backdrop-filter: blur(6px); font-size: 13px; color: var(--gold); }
+.g-preview[hidden] { display: none; }
+.g-eyebrow { margin: 0; letter-spacing: 0.22em; text-transform: uppercase; font-size: 13px; color: var(--gold); transition: opacity 0.6s; }
+.g-name { font-family: var(--display); font-weight: 400; font-size: clamp(46px, 13vw, 96px); line-height: 1.08; margin: 6px 0 0; max-width: 100%; overflow-wrap: anywhere; background: linear-gradient(180deg, #fff3cf, #f4c95d 55%, #e08a2b); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 28px rgba(255, 150, 50, 0.5)); transition: opacity 0.6s; }
+.g-hidden { opacity: 0 !important; }
+.g-diya { background: none; border: 0; padding: 0; cursor: pointer; width: clamp(160px, 36vw, 220px); margin-top: 22px; transition: width 0.9s ease; animation: bob 3s ease-in-out infinite; -webkit-tap-highlight-color: transparent; }
+.g-diya .diya { width: 100%; height: auto; aspect-ratio: 1; }
+.g-diya.lit { width: clamp(100px, 24vw, 140px); animation: none; cursor: default; }
+@keyframes bob { 50% { transform: translateY(-8px); } }
+.g-hint { margin: 10px 0 0; color: #ffe9a6; font-size: 16px; letter-spacing: 0.04em; animation: hintpulse 2s ease-in-out infinite; }
+@keyframes hintpulse { 50% { opacity: 0.45; } }
+.greet-body { width: 100%; max-width: 580px; margin-top: 14px; animation: rise 0.9s ease-out both; }
+.greet-body[hidden] { display: none; }
+.g-card { position: relative; padding: 26px 22px 22px; border-radius: 24px; background: linear-gradient(180deg, rgba(40, 28, 120, 0.82), rgba(14, 10, 50, 0.9)); border: 1px solid rgba(244, 201, 93, 0.6); box-shadow: inset 0 0 0 5px rgba(13, 10, 48, 0.92), inset 0 0 0 6px rgba(244, 201, 93, 0.3), 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 150, 50, 0.12); backdrop-filter: blur(8px); }
+.g-card .corner { position: absolute; }
+.g-head { font-family: var(--display); font-weight: 400; font-size: clamp(28px, 7vw, 40px); margin: 0 0 8px; color: var(--gold); text-shadow: 0 0 24px rgba(244, 201, 93, 0.5); }
+.g-thanks { margin: 0 0 12px; color: #d9d2f0; font-size: 16px; font-style: italic; }
+.g-wish { margin: 0; font-size: clamp(18px, 4.6vw, 22px); line-height: 1.6; color: #fff6e0; min-height: 3.2em; text-wrap: pretty; }
+.g-actions { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.g-from { margin: 16px 0 0; font-family: var(--display); color: #ffe9a6; font-size: 20px; }
+.gift { margin-top: 18px; }
+.gift[hidden], .offer[hidden], .g-cta[hidden] { display: none; }
+.gift button { display: inline-flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; color: #ffe9a6; font: inherit; font-size: 16px; cursor: pointer; animation: bob 2.4s ease-in-out infinite; }
+.gift svg { width: 84px; height: 84px; filter: drop-shadow(0 0 18px rgba(255, 150, 50, 0.7)); }
+.offer { margin-top: 18px; padding: 18px 16px; border-radius: 18px; background: radial-gradient(120% 140% at 50% 0%, rgba(255, 190, 70, 0.28), rgba(255, 138, 61, 0.1)); border: 1.5px dashed rgba(255, 224, 138, 0.85); animation: pop 0.7s cubic-bezier(0.2, 1.3, 0.3, 1) both; }
+.offer small { display: block; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); font-size: 12px; }
+.offer strong { display: block; font-family: var(--display); font-weight: 400; font-size: clamp(26px, 6.4vw, 36px); line-height: 1.2; margin: 6px 0; color: #fff3cf; text-shadow: 0 0 24px rgba(255, 190, 70, 0.6); overflow-wrap: anywhere; }
+.offer p { margin: 0 0 12px; color: #f1e8ff; font-size: 15px; }
+.g-cta { margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(244, 201, 93, 0.25); display: grid; gap: 10px; justify-items: center; }
+.g-cta p { margin: 0; color: var(--muted); font-size: 14px; }
+.g-made { margin-top: 24px; font-size: 13px; color: var(--muted); }
+.greet-lamps { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px; margin-top: 26px; }
+.greet-lamps .diya { width: 44px; height: 44px; }
+
+@media (max-width: 560px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .panel { padding: 30px 16px 24px; border-radius: 22px; }
+  .corner { width: 38px; height: 38px; }
+  .cd-cell { min-width: 60px; }
+  .cd-cell b { font-size: 27px; }
+  .countdown { gap: 8px; }
+  .diya { width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* DIYA FORMS: leaf-shaped panels with a lit diya niche, petal fields, diya toggles, marigold corners */
+.panel { margin-top: 56px; padding: 66px 24px 22px; border-radius: 58px 16px 58px 16px; background: linear-gradient(180deg, #1c1560 0%, rgba(22, 17, 72, 0.94) 100%); }
+.panel::before { border-radius: 50px 9px 50px 9px; }
+.panel-head { margin-bottom: 14px; }
+.niche { position: absolute !important; left: 50%; top: -34px; transform: translateX(-50%); width: 108px; height: 92px; z-index: 3; pointer-events: none; }
+.niche .arch { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 0 14px rgba(244, 201, 93, 0.35)); }
+.niche .diya { position: absolute; left: 50%; bottom: 10px; width: 58px; height: 58px; transform: translateX(-50%); }
+.corner { position: absolute !important; width: 34px; height: 34px; z-index: 2; pointer-events: none; animation: spin 50s linear infinite; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5)); }
+.corner.tl { top: -13px; left: -13px; } .corner.tr { top: -13px; right: -13px; }
+.corner.br { bottom: -13px; right: -13px; } .corner.bl { bottom: -13px; left: -13px; }
+.step-eyebrow { margin-top: 2px; }
+.field > label::before, fieldset.field > legend::before { content: ""; display: inline-block; width: 8px; height: 12px; margin-right: 7px; transform: translateY(1px); background: linear-gradient(180deg, #fff3c4, #ffa43d 60%, #ff5a2a); border-radius: 50% 50% 50% 50% / 72% 72% 28% 28%; box-shadow: 0 0 8px rgba(255, 150, 50, 0.85); }
+.grid2 { gap: 14px 16px; }
+input[type="text"], input[type="date"], input[type="tel"] { border-radius: 24px 7px 24px 7px; min-height: 46px; padding: 10px 18px; border-bottom-width: 3px; }
+textarea { border-radius: 30px 8px 30px 8px; padding: 14px 20px; }
+.bubble textarea, #smText { border-radius: 0; padding: 10px 10px 6px; }
+.seg span { border-radius: 8px 8px 24px 24px; padding: 8px 18px 10px; min-height: 42px; }
+.btn-big { border-radius: 14px 14px 44px 44px; }
+.check input { -webkit-appearance: none; appearance: none; width: 32px; height: 32px; margin: 0; flex: none; cursor: pointer; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M5 38 C9 56 21 62 32 62 C43 62 55 56 59 38 C48 44 16 44 5 38Z' fill='%23a8431a'/%3E%3Cellipse cx='32' cy='38' rx='27' ry='5.5' fill='%23c8561f'/%3E%3Cellipse cx='32' cy='37.2' rx='23' ry='3.4' fill='%235a2208'/%3E%3Crect x='31' y='30' width='2' height='8' rx='1' fill='%232a1608'/%3E%3C/svg%3E") center / contain no-repeat; filter: saturate(0.6) brightness(0.8); transition: filter 0.3s; }
+.check input:checked { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M5 38 C9 56 21 62 32 62 C43 62 55 56 59 38 C48 44 16 44 5 38Z' fill='%23d96f2b'/%3E%3Cellipse cx='32' cy='38' rx='27' ry='5.5' fill='%23f09a45'/%3E%3Cellipse cx='32' cy='37.2' rx='23' ry='3.4' fill='%235a2208'/%3E%3Crect x='31' y='30' width='2' height='8' rx='1' fill='%232a1608'/%3E%3Cpath d='M32 4 C39 13 41 22 32 31 C23 22 25 13 32 4Z' fill='%23ffb347'/%3E%3Cpath d='M32 15 C35 20 35.5 25 32 29 C28.5 25 29 20 32 15Z' fill='%23fff3c4'/%3E%3C/svg%3E"); filter: drop-shadow(0 0 8px rgba(255, 160, 60, 0.95)); }
+.check { gap: 12px; }
+.progress { border-radius: 38px 10px 38px 10px; }
+.note { border-radius: 24px 6px 24px 6px; }
+.g-card { border-radius: 52px 16px 52px 16px; }
+.offer { border-radius: 30px 8px 30px 8px; }
+.status .pill { border-radius: 999px 999px 999px 8px; }
+
+/* COMPACT MESSAGE LIST */
+.listbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.listbar h3 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 21px; color: #fff3cf; }
+.search { max-width: 230px; min-height: 40px !important; padding: 6px 16px !important; font-size: 14px; }
+.list { display: grid; gap: 8px; margin-top: 10px; }
+.item { border-radius: 30px 8px 30px 8px; background: linear-gradient(180deg, rgba(34, 25, 104, 0.75), rgba(10, 8, 38, 0.8)); border: 1px solid rgba(244, 201, 93, 0.3); animation: rise 0.4s ease-out both; transition: border-color 0.3s, box-shadow 0.3s; min-width: 0; }
+.item.sent { border-color: rgba(244, 201, 93, 0.85); box-shadow: 0 0 26px rgba(244, 201, 93, 0.14); }
+.item.open { border-color: rgba(244, 201, 93, 0.6); }
+.item-top { display: flex; align-items: center; gap: 12px; padding: 8px 10px 8px 8px; }
+.item .avatar { width: 46px; height: 46px; }
+.item .who { flex: 1; min-width: 0; }
+.who-line { display: flex; align-items: baseline; gap: 4px 10px; flex-wrap: wrap; }
+.item .who strong { font-size: 17px; display: inline; }
+.item .who small { font-size: 12.5px; }
+.preview { display: block; color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item-actions { display: flex; gap: 6px; flex: none; }
+.item.sent .sent-chip { display: inline-block; }
+.item-body { padding: 6px 12px 14px; display: grid; gap: 10px; border-top: 1px dashed rgba(244, 201, 93, 0.28); animation: rise 0.3s ease-out both; }
+@media (max-width: 520px) {
+  .panel { padding: 64px 16px 20px; border-radius: 44px 14px 44px 14px; }
+  .item-top { flex-wrap: wrap; }
+  .item-actions { width: 100%; justify-content: flex-end; }
+  .item .avatar { width: 42px; height: 42px; }
+}
+
+</style>
+
+</head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gFlame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff5a2a"/><stop offset="0.55" stop-color="#ff9a3d"/><stop offset="1" stop-color="#ffe27a"/></linearGradient>
+    <linearGradient id="gClay" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f09a45"/><stop offset="1" stop-color="#9c3d17"/></linearGradient>
+    <radialGradient id="gGlow"><stop offset="0" stop-color="#ffc766" stop-opacity="0.8"/><stop offset="0.5" stop-color="#ff9a3d" stop-opacity="0.28"/><stop offset="1" stop-color="#ff7a2a" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gLant" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd166"/><stop offset="0.5" stop-color="#ff7a45"/><stop offset="1" stop-color="#e6458f"/></linearGradient>
+    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b8"/><stop offset="1" stop-color="#e49a2c"/></linearGradient>
+    <symbol id="lotus" viewBox="0 0 64 40">
+      <g fill="url(#gGold)" stroke="#7a4a0c" stroke-width="0.6" stroke-linejoin="round">
+        <path d="M32 36 C14 38 4 32 0 20 C12 20 26 26 32 36Z"/><path d="M32 36 C50 38 60 32 64 20 C52 20 38 26 32 36Z"/>
+        <path d="M32 36 C20 34 10 26 8 12 C20 14 29 22 32 36Z"/><path d="M32 36 C44 34 54 26 56 12 C44 14 35 22 32 36Z"/>
+        <path d="M32 2 C39 12 39 26 32 36 C25 26 25 12 32 2Z"/>
+      </g>
+    </symbol>
+    <symbol id="corner" viewBox="0 0 48 48">
+      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 46 V16 C3 8 8 3 16 3 H46" stroke-width="1.6"/>
+        <path d="M9 46 V18 C9 13 13 9 18 9 H46" stroke-width="0.9" stroke-opacity="0.7"/>
+        <path d="M16 16 C20 16 22 20 20 23 C18 26 13 24 14 20" stroke-width="1.2"/>
+        <path d="M8 8 l5 5 -5 5 -5 -5z" stroke-width="1" fill="currentColor" fill-opacity="0.4"/>
+        <circle cx="30" cy="3" r="1.4" fill="currentColor" stroke="none"/><circle cx="3" cy="30" r="1.4" fill="currentColor" stroke="none"/>
+      </g>
+    </symbol>
+    <symbol id="mgA" viewBox="0 0 22 22"><g fill="#ffb703"><circle cx="17.5" cy="11" r="3.6"/><circle cx="15.6" cy="15.6" r="3.6"/><circle cx="11" cy="17.5" r="3.6"/><circle cx="6.4" cy="15.6" r="3.6"/><circle cx="4.5" cy="11" r="3.6"/><circle cx="6.4" cy="6.4" r="3.6"/><circle cx="11" cy="4.5" r="3.6"/><circle cx="15.6" cy="6.4" r="3.6"/></g><circle cx="11" cy="11" r="5.2" fill="#fb8500"/><circle cx="11" cy="11" r="2.2" fill="#ffd166"/></symbol>
+    <symbol id="mgB" viewBox="0 0 22 22"><g fill="#ff9f1c"><circle cx="17.5" cy="11" r="3.6"/><circle cx="15.6" cy="15.6" r="3.6"/><circle cx="11" cy="17.5" r="3.6"/><circle cx="6.4" cy="15.6" r="3.6"/><circle cx="4.5" cy="11" r="3.6"/><circle cx="6.4" cy="6.4" r="3.6"/><circle cx="11" cy="4.5" r="3.6"/><circle cx="15.6" cy="6.4" r="3.6"/></g><circle cx="11" cy="11" r="5.2" fill="#e85d04"/><circle cx="11" cy="11" r="2.2" fill="#ffc15e"/></symbol>
+    <symbol id="mgC" viewBox="0 0 22 22"><g fill="#ffd60a"><circle cx="17.5" cy="11" r="3.6"/><circle cx="15.6" cy="15.6" r="3.6"/><circle cx="11" cy="17.5" r="3.6"/><circle cx="6.4" cy="15.6" r="3.6"/><circle cx="4.5" cy="11" r="3.6"/><circle cx="6.4" cy="6.4" r="3.6"/><circle cx="11" cy="4.5" r="3.6"/><circle cx="15.6" cy="6.4" r="3.6"/></g><circle cx="11" cy="11" r="5.2" fill="#ff9500"/><circle cx="11" cy="11" r="2.2" fill="#fff0a8"/></symbol>
+  </defs>
+</svg>
+
+<canvas id="bg" class="layer" aria-hidden="true"></canvas>
+<canvas id="fx" class="layer" aria-hidden="true"></canvas>
+<div class="bokeh" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="floor-glow" aria-hidden="true"></div>
+<div class="toran-wrap" id="toran" aria-hidden="true"></div>
+<div class="jhumar l" id="jhL" aria-hidden="true"></div>
+<div class="jhumar r" id="jhR" aria-hidden="true"></div>
+
+<main class="wrap">
+  <header class="hero">
+    <div class="mandala" id="mandala" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <p class="eyebrow"><b>शुभ दीपावली</b>Sunday, 8 November 2026</p>
+      <h1>Diwali Wish Machine</h1>
+      <p class="lede">Send every customer a personal Diwali wish. Each one gets a magical page where fireworks spell their name.</p>
+      <ul class="chips"><li>Name in fireworks</li><li>A rangoli unique to each person</li><li>One-tap WhatsApp</li><li>Free, runs in your browser</li></ul>
+      <div id="countdown" class="countdown" role="timer" aria-label="Time left until Diwali"></div>
+      <p class="cd-note" id="cdNote">until Diwali</p>
+    </div>
+  </header>
+
+  <section class="panel" aria-labelledby="h-biz">
+    <div class="panel-head">
+      <p class="step-eyebrow">Step 1 of 4</p>
+      <h2 id="h-biz">Your business</h2>
+      <p class="hint">These details go into every message and every wish page.</p>
+      <div class="orn" aria-hidden="true"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label for="biz">Business name</label><input type="text" id="biz" placeholder="e.g. Sharma Sweets" autocomplete="organization"></div>
+      <div class="field"><label for="me">Your name</label><input type="text" id="me" placeholder="e.g. Rajesh" autocomplete="name"></div>
+      <div class="field full"><label for="sell">What you sell</label><input type="text" id="sell" placeholder="e.g. sweets and gift boxes"></div>
+      <div class="field"><label for="offer">Diwali offer <span class="opt">(optional)</span></label><input type="text" id="offer" placeholder="e.g. 10% off on gift boxes"></div>
+      <div class="field"><label for="until">Offer valid until <span class="opt">(optional)</span></label><input type="date" id="until"></div>
+      <div class="field"><label for="claim">Claim word <span class="opt">(optional)</span></label><input type="text" id="claim" placeholder="e.g. DIYA" maxlength="20"></div>
+      <div class="field"><label for="wa">Your WhatsApp number <span class="opt">(optional)</span></label><input type="tel" id="wa" placeholder="10-digit number" inputmode="tel" autocomplete="tel"></div>
+      <p class="sub">With a claim word and your number, the gift on the wish page gets a button that opens your WhatsApp with the claim word filled in.</p>
+      <fieldset class="field">
+        <legend>Tone</legend>
+        <div class="seg" id="tone">
+          <label><input type="radio" name="tone" value="warm" checked><span>Warm</span></label>
+          <label><input type="radio" name="tone" value="professional"><span>Professional</span></label>
+          <label><input type="radio" name="tone" value="fun"><span>Fun</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="field">
+        <legend>Language</legend>
+        <div class="seg" id="lang">
+          <label><input type="radio" name="lang" value="en" checked><span>English</span></label>
+          <label><input type="radio" name="lang" value="hinglish"><span>Hinglish</span></label>
+          <label><input type="radio" name="lang" value="hi"><span>हिन्दी</span></label>
+        </div>
+      </fieldset>
+      <div class="field full row"><button class="btn small btn-ghost" id="sampleBiz" type="button">Fill a sample business</button></div>
+    </div>
+  </section>
+  <div class="garland" aria-hidden="true"></div>
+
+  <section class="panel" aria-labelledby="h-cust">
+    <div class="panel-head">
+      <p class="step-eyebrow">Step 2 of 4</p>
+      <h2 id="h-cust">Your customers</h2>
+      <p class="hint">Paste rows from Excel or a CSV. Columns: name, phone, last purchase, city. Only name and phone are needed.</p>
+      <div class="orn" aria-hidden="true"></div>
+    </div>
+    <label for="paste" style="position:absolute;left:-9999px">Customer rows</label>
+    <textarea id="paste" spellcheck="false" placeholder="Aarti Sharma, 98xxxxxx01, Kaju Katli box, Meerut&#10;Rohan Verma, 98xxxxxx02, Soan Papdi, Ghaziabad&#10;Tab-separated rows from Excel work too."></textarea>
+    <div class="row" style="margin-top:14px">
+      <button class="btn small" id="sampleCust" type="button">Load sample customers</button>
+      <button class="btn small btn-ghost" id="clearCust" type="button">Clear</button>
+    </div>
+    <div class="status" id="status" aria-live="polite"></div>
+    <ul class="issues" id="issues"></ul>
+  </section>
+  <div class="garland" aria-hidden="true"></div>
+
+  <section class="panel" aria-labelledby="h-gen">
+    <div class="panel-head">
+      <p class="step-eyebrow">Step 3 of 4</p>
+      <h2 id="h-gen">Make it magical</h2>
+      <p class="hint">One unique message per customer, plus a personal wish page that opens from a link inside it.</p>
+      <div class="orn" aria-hidden="true"></div>
+    </div>
+    <div class="center">
+      <fieldset class="field" style="align-items:center">
+        <legend>Message size</legend>
+        <div class="seg" id="size">
+          <label><input type="radio" name="size" value="rich" checked><span>Rich (about 90 words)</span></label>
+          <label><input type="radio" name="size" value="short"><span>Short (under 60)</span></label>
+        </div>
+      </fieldset>
+      <div class="extras">
+        <label class="check"><input type="checkbox" id="usePage"> Add a personal wish page link to every message</label>
+        <div class="field" id="baseField" hidden>
+          <label for="base">Where this page is hosted</label>
+          <input type="text" id="base" placeholder="https://your-site.netlify.app/" autocomplete="off" spellcheck="false">
+          <p class="sub" id="baseHint">Customers open their personal wish page from this address. You can preview every wish page below.</p>
+        </div>
+        <label class="check"><input type="checkbox" id="optout"> Add a line that lets people opt out</label>
+      </div>
+      <button class="btn btn-gold btn-big" id="gen" type="button">Generate wishes</button>
+    </div>
+  </section>
+  <div class="garland" aria-hidden="true"></div>
+
+  <section class="panel" id="results" aria-labelledby="h-send" hidden>
+    <div class="panel-head">
+      <p class="step-eyebrow">Step 4 of 4</p>
+      <h2 id="h-send">Send</h2>
+      <p class="hint">Use send mode to move through customers one tap at a time, or edit and send from any card.</p>
+      <div class="orn" aria-hidden="true"></div>
+    </div>
+    <div class="progress">
+      <div class="progress-top"><strong id="progText">0 of 0 sent</strong><span id="progSub">Light a diya for every wish you send</span></div>
+      <div class="diyas" id="diyaRow" aria-hidden="true"></div>
+      <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+    </div>
+    <div class="row center-row">
+      <button class="btn btn-gold" id="startSend" type="button">Start send mode</button>
+      <button class="btn small" id="copyAll" type="button">Copy all</button>
+      <button class="btn small" id="copyCsv" type="button">Copy as CSV</button>
+      <button class="btn small btn-ghost" id="regenAll" type="button">Rewrite all unsent</button>
+    </div>
+    <div class="manual" id="manual" hidden>
+      <label for="manualBox">Copy blocked here. Select this text and copy it yourself.</label>
+      <textarea id="manualBox" rows="6" readonly></textarea>
+    </div>
+    <div class="listbar"><h3 id="listTitle">Your messages</h3><input type="text" id="search" class="search" placeholder="Search a name" aria-label="Search customers" hidden></div>
+    <div class="list" id="cards"></div>
+    <div class="row center-row" style="margin-top:12px"><button class="btn small btn-ghost" id="moreBtn" type="button" hidden>Show more</button></div>
+    <p class="note">Message only people who already know your business, and send one at a time. Mass or automatic sending can get a WhatsApp account reported or restricted.</p>
+  </section>
+
+  <footer class="foot">
+    <div class="foot-diyas lit-static" id="footDiyas" aria-hidden="true"></div>
+    <p>Made for Diwali 2026. Free to use.</p>
+    <p>Everything runs in your browser. Your customer list never leaves this page.</p>
+  </footer>
+</main>
+
+<div class="sendmode" id="sendmode" hidden role="dialog" aria-modal="true" aria-label="Send mode">
+  <div class="sm-box">
+    <div class="sm-top"><strong id="smProg">1 of 8</strong><button class="btn small btn-ghost" id="smClose" type="button">Close</button></div>
+    <div class="bar" aria-hidden="true"><i id="smBar"></i></div>
+    <div class="sm-who"><div class="avatar big" id="smAvatar"></div><div><h3 id="smName"></h3><small id="smPhone"></small></div></div>
+    <div class="bubble"><textarea id="smText" aria-label="Message to send"></textarea><span class="tick">now &#10003;&#10003;</span></div>
+    <a class="btn btn-wa btn-big" id="smWa" target="_blank" rel="noopener noreferrer">Open in WhatsApp</a>
+    <p class="sm-hint">Press send in WhatsApp, then come back. This card is marked sent and the next customer opens.</p>
+    <div class="row center-row">
+      <button class="btn small" id="smSent" type="button">I sent it, next</button>
+      <button class="btn small btn-ghost" id="smPrev" type="button">Back</button>
+      <button class="btn small btn-ghost" id="smSkip" type="button">Skip</button>
+      <button class="btn small btn-ghost" id="smPreview" type="button">Preview wish page</button>
+      <button class="btn small btn-ghost" id="smUndo" type="button" hidden>Undo last</button>
+    </div>
+  </div>
+</div>
+
+<div class="greet" id="greet" hidden role="dialog" aria-modal="true" aria-label="Diwali wish">
+  <div class="greet-toran" id="gToran" aria-hidden="true"></div>
+  <div class="g-rangoli" id="gRangoli" aria-hidden="true"></div>
+  <div class="greet-scene" id="gScene">
+    <div class="g-preview" id="gPreview" hidden><span>Preview of the page your customer sees</span><button class="btn small btn-ghost" id="gClose" type="button">Close preview</button></div>
+    <p class="g-eyebrow" id="gEyebrow">A Diwali surprise for</p>
+    <h2 class="g-name" id="gName">Friend</h2>
+    <button class="g-diya" id="gDiya" type="button" aria-label="Light the diya"></button>
+    <p class="g-hint" id="gHint">Tap the diya to light it</p>
+    <div class="greet-body" id="gBody" hidden>
+      <div class="g-card">
+        <div class="corner tl"><svg aria-hidden="true"><use href="#mgB"/></svg></div><div class="corner tr"><svg aria-hidden="true"><use href="#mgA"/></svg></div>
+        <div class="corner br"><svg aria-hidden="true"><use href="#mgC"/></svg></div><div class="corner bl"><svg aria-hidden="true"><use href="#mgB"/></svg></div>
+        <h3 class="g-head" id="gHead"></h3>
+        <p class="g-thanks" id="gThanks"></p>
+        <p class="g-wish" id="gWish" aria-live="polite"></p>
+        <div class="g-actions"><button class="btn small" id="gHear" type="button" hidden>Hear my wish</button></div>
+        <div class="gift" id="gGift" hidden>
+          <button id="gUnwrap" type="button">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="26" width="48" height="32" rx="4" fill="#e6458f"/><rect x="5" y="18" width="54" height="12" rx="4" fill="#ff6b9a"/><rect x="28" y="18" width="8" height="40" fill="#ffd166"/><path d="M32 18 C24 4 10 8 18 16 C22 20 30 18 32 18 Z M32 18 C40 4 54 8 46 16 C42 20 34 18 32 18Z" fill="#ffd166"/></svg>
+            <span id="gUnwrapText">Tap to unwrap your gift</span>
+          </button>
+        </div>
+        <div class="offer" id="gOffer" hidden>
+          <small id="gOfferLabel">Your Diwali gift</small>
+          <strong id="gOfferText"></strong>
+          <p id="gOfferUntil"></p>
+          <a class="btn btn-wa" id="gClaim" target="_blank" rel="noopener noreferrer" hidden>Claim on WhatsApp</a>
+          <p id="gClaimNote" hidden></p>
+        </div>
+        <p class="g-from" id="gFrom"></p>
+        <div class="g-cta" id="gCta" hidden>
+          <a class="btn btn-wa small" id="gWishBack" target="_blank" rel="noopener noreferrer" hidden>Send a wish back</a>
+          <p id="gMakeText">Own a business? Make a wish page like this for your customers, free.</p>
+          <a class="btn btn-gold small" id="gMake">Make yours</a>
+          <a class="btn small btn-ghost" id="gForward" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
+        </div>
+      </div>
+      <p class="g-made">Made with Diwali Wish Machine</p>
+    </div>
+    <div class="greet-lamps" id="gLamps" aria-hidden="true"></div>
+  </div>
+</div>
+
+<div class="finale" id="finale" hidden role="dialog" aria-modal="true" aria-labelledby="finaleTitle">
+  <div class="finale-box">
+    <h2 id="finaleTitle">Shubh Deepavali</h2>
+    <p id="finaleSub">Every wish is sent.</p>
+    <div class="row center-row">
+      <a class="btn btn-wa" id="finaleShare" target="_blank" rel="noopener noreferrer">Tell a friend on WhatsApp</a>
+      <button class="btn btn-gold" id="finaleClose" type="button">Back to my messages</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script id="core">
+/* ---------- CORE LOGIC (no DOM) ---------- */
+var MONTHS_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var MONTHS_HI = ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
+
+var BANKS = {
+  en: {
+    warm: {
+      greet: ['Hi {n},', 'Dear {n},', 'Hello {n},', 'Namaste {n},'],
+      headline: ['Happy Diwali!', 'Shubh Deepavali!', 'Wishing you a happy Diwali!', 'Happy Diwali from all of us!'],
+      wish: ['May your home glow with joy, health and prosperity this Diwali.', 'Wishing you and your family a Diwali full of light and laughter.', 'May the festival of lights bring you sweetness and good news.', 'Hope this Diwali brings your family closer and your days brighter.'],
+      lamp: ["We're lighting a diya for you and your loved ones today.", 'A small diya from our side, to brighten your festive week.', 'May every corner of your home shine bright this Diwali.', 'Thinking of you as the diyas get lit this year.'],
+      thanksP: ['Thank you for choosing us for your {p}.', 'We loved helping you with your {p}.', 'Your {p} with us meant a lot to our team.'],
+      thanksC: ['Sending warm wishes to everyone in {c}.', 'Greetings from our team to your family in {c}.', 'Hope {c} is all lit up for the festival.'],
+      thanksPC: ['Thank you for your {p}, and warm wishes to everyone in {c}.'],
+      thanksS: ['Thank you for trusting us for your {s}.'],
+      thanksN: ['Thank you for being part of our journey this year.', 'Your support through the year means the world to us.', "We're grateful to have you with us."],
+      offer: ['As a small Diwali gift: {o}{u}.', 'Our festive treat for you: {o}{u}.', 'A special Diwali offer, just for you: {o}{u}.'],
+      close: ['Stay blessed!', 'Warm wishes to your family.', 'Celebrate well!', 'Hope to see you soon.']
+    },
+    professional: {
+      greet: ['Dear {n},', 'Respected {n},', 'Good day {n},', 'Hello {n},'],
+      headline: ['Wishing you a happy Diwali.', 'Warm Diwali greetings.', 'Happy Diwali and best wishes.', 'Season’s greetings on Diwali.'],
+      wish: ['May this festival bring you and your family prosperity, good health and success.', 'We wish you a bright and prosperous Diwali and a successful year ahead.', 'May the coming year be filled with growth, happiness and good fortune.', 'Wishing you peace, prosperity and joy this festive season.'],
+      lamp: ['May the light of Diwali bring clarity and success to all you do.', 'May the festival of lights open new opportunities for you.', 'We hope this Diwali illuminates your home and your year ahead.', 'May Goddess Lakshmi bless you with abundance this Diwali.'],
+      thanksP: ['Thank you for choosing us for your {p}.', 'We appreciate your trust in us for your {p}.', 'It was a pleasure serving you with your {p}.'],
+      thanksC: ['Our team extends greetings to you and your family in {c}.', 'Best wishes to you and your family in {c}.', 'Greetings from our team to {c}.'],
+      thanksPC: ['Thank you for your {p}. Our greetings to you and your family in {c}.'],
+      thanksS: ['We appreciate you choosing us for {s}.'],
+      thanksN: ['We value your continued association with us.', 'Thank you for your trust and support this year.', 'We appreciate your support throughout the year.'],
+      offer: ['For the festive season, we are pleased to offer {o}{u}.', 'Our Diwali offer for you: {o}{u}.', 'As a token of appreciation: {o}{u}.'],
+      close: ['Please let us know if we can help.', 'We look forward to serving you again.', 'With best regards.', 'Wishing you the very best.']
+    },
+    fun: {
+      greet: ['Hey {n}!', 'Hi {n}!', 'Namaste {n}!', 'Hello {n}!'],
+      headline: ['Happy Diwali! 🪔', 'Diwali is here! ✨', 'Light the diyas! 🪔', 'Shubh Deepavali! ✨'],
+      wish: ['Hope your Diwali is full of sweets, sparkle and zero stress.', 'Wishing you more light, more laughter and way more mithai.', 'May your home glow and your sweet box never run empty.', 'May your Diwali be loud, bright and delicious.'],
+      lamp: ['The diyas are lit and so is our mood!', 'Crackers, lights, mithai: may you get all three.', 'May your Diwali sparkle more than the fireworks.', 'Light a diya, eat a laddoo, repeat.'],
+      thanksP: ['Your {p} made our day, thank you!', "We're still happy about your {p}!", 'Thanks for picking us for your {p}!'],
+      thanksC: ['Sending festive vibes all the way to {c}!', '{c} is going to shine this Diwali!', 'Big Diwali hugs to everyone in {c}!'],
+      thanksPC: ['Loved your {p}! Big festive hugs to {c}!'],
+      thanksS: ['Thanks for letting us be your {s} people!'],
+      thanksN: ['Thanks for being part of our crew this year!', 'You made our year brighter, thank you!', 'Thanks for being awesome this year!'],
+      offer: ['Festive surprise: {o}{u}.', 'Our Diwali treat for you: {o}{u}!', 'Psst, a Diwali deal: {o}{u}.'],
+      close: ['Celebrate big!', 'Eat lots of mithai!', 'Stay sparkly!', 'Have a blast!']
+    }
+  },
+  hinglish: {
+    warm: {
+      greet: ['Namaste {n},', 'Hi {n},', 'Hello {n},', 'Dear {n},'],
+      headline: ['Happy Diwali!', 'Shubh Deepavali!', 'Diwali ki dher saari shubhkamnayein!', 'Aapko aur parivaar ko Happy Diwali!'],
+      wish: ['Aapka ghar khushiyon aur roshni se bhara rahe.', 'Maa Lakshmi aapke parivaar par sukh aur samriddhi barsayein.', 'Ye Diwali aapke liye mithaas aur acchi khabrein laaye.', 'Is Diwali aapke saare sapne roshan hon.'],
+      lamp: ['Hum aapke naam ka ek diya jala rahe hain.', 'Diyon ki roshni aapke ghar ke har kone mein pahunche.', 'Is tyohaar aapke chehre par muskaan banee rahe.', 'Diwali ki roshni aapke din aur bhi ujjwal kare.'],
+      thanksP: ['Aapne apne {p} ke liye humein chuna, shukriya!', 'Aapke {p} mein madad karke humein bahut accha laga.', 'Aapka {p} humare liye khaas tha, dhanyavaad.'],
+      thanksC: ['{c} mein aap sabko humari taraf se dher saari shubhkamnayein.', '{c} ke saare parivaar ko humara pyaar.', 'Umeed hai {c} mein bhi tyohaar ki raunak hai.'],
+      thanksPC: ['{p} ke liye shukriya, aur {c} mein sabko humari shubhkamnayein.'],
+      thanksS: ['{s} ke liye humein chunne ka shukriya.'],
+      thanksN: ['Is saal humare saath rehne ke liye shukriya.', 'Aapka saath humare liye bahut maayne rakhta hai.', 'Aapke bharose ke liye dil se dhanyavaad.'],
+      offer: ['Diwali ke mauke par humari taraf se: {o}{u}.', 'Aapke liye khaas Diwali offer: {o}{u}.', 'Ek chhota sa tohfa: {o}{u}.'],
+      close: ['Khush rahiye!', 'Parivaar ko humari shubhkamnayein.', 'Dhoom-dhaam se manaiye!', 'Jaldi milte hain.']
+    },
+    professional: {
+      greet: ['Namaste {n},', 'Respected {n},', 'Dear {n},', 'Hello {n},'],
+      headline: ['Diwali ki hardik shubhkamnayein.', 'Happy Diwali aur shubh kamnayein.', 'Deepavali ki hardik badhai.', 'Aapko Diwali ki dher saari badhai.'],
+      wish: ['Ye tyohaar aapke aur parivaar ke liye sukh, samriddhi aur safalta laaye.', 'Naya saal aapke liye tarakki aur khushiyon se bhara ho.', 'Aapko swasthya, samriddhi aur shanti ki shubhkamnayein.', 'Maa Lakshmi aap par kripa banaye rakhein.'],
+      lamp: ['Diwali ki roshni aapke har kaam mein safalta laaye.', 'Is deepotsav par aapko naye avsar milein.', 'Ye Diwali aapke ghar aur vyapaar dono ko roshan kare.', 'Diyon ka ye tyohaar aapke liye shubh ho.'],
+      thanksP: ['Aapne {p} ke liye humein chuna, iske liye dhanyavaad.', '{p} ke liye aapke bharose ka hum aadar karte hain.', 'Aapki {p} mein sewa karna humare liye khushi ki baat thi.'],
+      thanksC: ['{c} mein aap aur parivaar ko humari team ki taraf se shubhkamnayein.', '{c} ke aap sabhi ko hardik shubhkamnayein.', 'Humari team ki taraf se {c} ko Diwali ki badhai.'],
+      thanksPC: ['{p} ke liye dhanyavaad. {c} mein aap aur parivaar ko hardik shubhkamnayein.'],
+      thanksS: ['{s} ke liye aapke vishwas ka hum aadar karte hain.'],
+      thanksN: ['Aapke nirantar sahyog ke liye dhanyavaad.', 'Is saal aapke bharose ke liye hum aabhari hain.', 'Aapka saath humare liye anmol hai.'],
+      offer: ['Tyohaar ke avsar par humara offer: {o}{u}.', 'Aapke liye Diwali offer: {o}{u}.', 'Aabhar swaroop: {o}{u}.'],
+      close: ['Kisi bhi madad ke liye bataiye.', 'Aapki sewa ka mauka phir milega, aisi umeed hai.', 'Saadar.', 'Aapko bahut shubhkamnayein.']
+    },
+    fun: {
+      greet: ['Arre {n}!', 'Hey {n}!', 'Namaste {n}!', 'Hi {n}!'],
+      headline: ['Happy Diwali! 🪔', 'Diwali aa gayi! ✨', 'Diye jalao! 🪔', 'Shubh Deepavali! ✨'],
+      wish: ['Mithai khoob khaiye, tension bilkul nahi!', 'Ghar jagmagaye aur mithai ka dabba kabhi khaali na ho.', 'Roshni, hansi aur dher saari mithai aapke naam!', 'Is Diwali full dhamaka rahe!'],
+      lamp: ['Diye jal gaye, mood bhi set hai!', 'Patakhe, roshni, mithai: teeno aapko mile.', 'Aapki Diwali patakhon se bhi zyada chamke.', 'Ek diya jalao, ek laddoo khao, repeat!'],
+      thanksP: ['Aapka {p} humare liye khaas tha, thanks!', 'Aapne {p} ke liye humein chuna, maza aa gaya!', '{p} ke liye shukriya, aap best ho!'],
+      thanksC: ['{c} tak festive vibes bhej rahe hain!', '{c} mein is baar Diwali jagmagayegi!', '{c} ke sabhi logon ko Diwali ka bada hug!'],
+      thanksPC: ['{p} ke liye thanks! {c} ko Diwali ka bada hug!'],
+      thanksS: ['{s} ke liye humein chuna, maza aa gaya!'],
+      thanksN: ['Is saal humare saath rehne ke liye thanks!', 'Aapne humara saal roshan kar diya!', 'Humare saath jude rehne ke liye shukriya!'],
+      offer: ['Festive surprise: {o}{u}.', 'Aapke liye Diwali treat: {o}{u}!', 'Psst, Diwali deal: {o}{u}.'],
+      close: ['Dhoom machao!', 'Khoob mithai khao!', 'Chamakte raho!', 'Maza karo!']
+    }
+  },
+  hi: {
+    warm: {
+      greet: ['नमस्ते {n},', 'प्रिय {n},', 'हेलो {n},', 'आदरणीय {n},'],
+      headline: ['दीपावली की हार्दिक शुभकामनाएँ!', 'शुभ दीपावली!', 'आपको और परिवार को दीपावली मुबारक!', 'दीपोत्सव की ढेर सारी शुभकामनाएँ!'],
+      wish: ['आपका घर खुशियों और रोशनी से भरा रहे।', 'माँ लक्ष्मी आपके परिवार पर सुख और समृद्धि बरसाएँ।', 'यह दीपावली आपके लिए मिठास और अच्छी ख़बरें लाए।', 'इस दीपावली आपके सारे सपने रोशन हों।'],
+      lamp: ['हम आपके नाम का एक दीया जला रहे हैं।', 'दीयों की रोशनी आपके घर के हर कोने में पहुँचे।', 'इस त्योहार आपके चेहरे पर मुस्कान बनी रहे।', 'दीपावली की रोशनी आपके दिन और उजले करे।'],
+      thanksP: ['अपने {p} के लिए हमें चुनने का शुक्रिया।', 'आपके {p} में मदद करके हमें बहुत अच्छा लगा।', 'आपका {p} हमारे लिए ख़ास था, धन्यवाद।'],
+      thanksC: ['{c} में आप सभी को हमारी ओर से ढेर सारी शुभकामनाएँ।', '{c} के पूरे परिवार को हमारा प्यार।', 'उम्मीद है {c} में भी त्योहार की रौनक है।'],
+      thanksPC: ['{p} के लिए शुक्रिया, और {c} में सभी को हमारी शुभकामनाएँ।'],
+      thanksS: ['{s} के लिए हम पर भरोसा करने का शुक्रिया।'],
+      thanksN: ['इस साल हमारे साथ रहने के लिए शुक्रिया।', 'आपका साथ हमारे लिए बहुत मायने रखता है।', 'आपके भरोसे के लिए दिल से धन्यवाद।'],
+      offer: ['दीपावली के मौके पर हमारी ओर से: {o}{u}।', 'आपके लिए ख़ास दीपावली ऑफ़र: {o}{u}।', 'एक छोटा सा तोहफ़ा: {o}{u}।'],
+      close: ['ख़ुश रहिए!', 'परिवार को हमारी शुभकामनाएँ।', 'धूमधाम से मनाइए!', 'जल्द मिलते हैं।']
+    },
+    professional: {
+      greet: ['नमस्कार {n},', 'आदरणीय {n},', 'प्रिय {n},', 'सादर नमस्ते {n},'],
+      headline: ['दीपावली की हार्दिक शुभकामनाएँ।', 'दीपावली पर हार्दिक बधाई।', 'आपको दीपोत्सव की ढेर सारी बधाई।', 'शुभ दीपावली और सादर शुभकामनाएँ।'],
+      wish: ['यह पर्व आपके और परिवार के लिए सुख, समृद्धि और सफलता लाए।', 'नया साल आपके लिए तरक़्क़ी और ख़ुशियों से भरा हो।', 'आपको स्वास्थ्य, समृद्धि और शांति की शुभकामनाएँ।', 'माँ लक्ष्मी आप पर कृपा बनाए रखें।'],
+      lamp: ['दीपावली की रोशनी आपके हर कार्य में सफलता लाए।', 'इस दीपोत्सव पर आपको नए अवसर मिलें।', 'यह दीपावली आपके घर और व्यापार दोनों को रोशन करे।', 'दीयों का यह पर्व आपके लिए शुभ हो।'],
+      thanksP: ['{p} के लिए हमें चुनने हेतु धन्यवाद।', '{p} के लिए आपके भरोसे का हम सम्मान करते हैं।', 'आपके {p} में सेवा करना हमारे लिए ख़ुशी की बात थी।'],
+      thanksC: ['{c} में आपको और परिवार को हमारी टीम की ओर से शुभकामनाएँ।', '{c} के आप सभी को हार्दिक शुभकामनाएँ।', 'हमारी टीम की ओर से {c} को दीपावली की बधाई।'],
+      thanksPC: ['{p} के लिए धन्यवाद। {c} में आपको और परिवार को हार्दिक शुभकामनाएँ।'],
+      thanksS: ['{s} के लिए आपके विश्वास का हम आदर करते हैं।'],
+      thanksN: ['आपके निरंतर सहयोग के लिए धन्यवाद।', 'इस साल आपके भरोसे के लिए हम आभारी हैं।', 'आपका साथ हमारे लिए अनमोल है।'],
+      offer: ['त्योहार के अवसर पर हमारा ऑफ़र: {o}{u}।', 'आपके लिए दीपावली ऑफ़र: {o}{u}।', 'आभार स्वरूप: {o}{u}।'],
+      close: ['किसी भी मदद के लिए बताइए।', 'आपकी सेवा का अवसर फिर मिलेगा, ऐसी आशा है।', 'सादर।', 'आपको बहुत शुभकामनाएँ।']
+    },
+    fun: {
+      greet: ['अरे {n}!', 'हेलो {n}!', 'नमस्ते {n}!', 'हाय {n}!'],
+      headline: ['हैप्पी दिवाली! 🪔', 'दिवाली आ गई! ✨', 'दीये जलाओ! 🪔', 'शुभ दीपावली! ✨'],
+      wish: ['मिठाई ख़ूब खाइए, टेंशन बिल्कुल नहीं!', 'घर जगमगाए और मिठाई का डिब्बा कभी ख़ाली न हो।', 'रोशनी, हँसी और ढेर सारी मिठाई आपके नाम!', 'इस दिवाली फ़ुल धमाका रहे!'],
+      lamp: ['दीये जल गए, मूड भी सेट है!', 'पटाख़े, रोशनी, मिठाई: तीनों आपको मिलें।', 'आपकी दिवाली पटाख़ों से भी ज़्यादा चमके।', 'एक दीया जलाओ, एक लड्डू खाओ, रिपीट!'],
+      thanksP: ['आपका {p} हमारे लिए ख़ास था, थैंक्स!', 'आपने {p} के लिए हमें चुना, मज़ा आ गया!', '{p} के लिए शुक्रिया, आप बेस्ट हो!'],
+      thanksC: ['{c} तक त्योहार की रौनक भेज रहे हैं!', '{c} में इस बार दिवाली जगमगाएगी!', '{c} के सभी लोगों को दिवाली की बड़ी झप्पी!'],
+      thanksPC: ['{p} के लिए थैंक्स! {c} को दिवाली की बड़ी झप्पी!'],
+      thanksS: ['{s} के लिए हमें चुना, मज़ा आ गया!'],
+      thanksN: ['इस साल हमारे साथ रहने के लिए थैंक्स!', 'आपने हमारा साल रोशन कर दिया!', 'हमारे साथ जुड़े रहने के लिए शुक्रिया!'],
+      offer: ['फ़ेस्टिव सरप्राइज़: {o}{u}।', 'आपके लिए दिवाली ट्रीट: {o}{u}!', 'श्श, दिवाली डील: {o}{u}।'],
+      close: ['धूम मचाओ!', 'ख़ूब मिठाई खाओ!', 'चमकते रहो!', 'मज़ा करो!']
+    }
+  }
+};
+
+/* 12 message structures. Tokens are filled from the banks above, so the order, the line breaks and the wording all change from customer to customer. */
+var STRUCTS = [
+  '{greet} {wish} {thanks} {offer} {close}',
+  '{headline} {greet}\n{thanks} {offer} {lamp}',
+  '{greet}\n{thanks} {offer} {wish} {close}',
+  '{headline}\n{greet} {thanks} {wish} {offer}',
+  '{greet} {headline} {thanks} {offer} {close}',
+  '{greet} {thanks} {lamp} {offer} {close}',
+  '{headline} {thanks} {wish}\n{offer} {close}',
+  '{greet}\n{lamp} {thanks} {offer}',
+  '{greet} {thanks} {offer}\n{lamp}',
+  '{headline} {greet} {wish}\n{thanks} {offer}',
+  '{greet} {offer} {thanks} {wish}',
+  '{greet} {thanks} {wish} {close}\n{offer}'
+];
+
+var UNTIL = { en: ' (valid till {d})', hinglish: ' (valid {d} tak)', hi: ' ({d} तक मान्य)' };
+var OPTOUT = { en: 'Reply STOP to opt out.', hinglish: 'Offers band karne ke liye STOP likhein.', hi: 'ऑफ़र बंद करने के लिए STOP लिखें।' };
+
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    var t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function pickFrom(rng, arr) { return arr[Math.floor(rng() * arr.length) % arr.length]; }
+function firstName(full) { return String(full || '').trim().split(/\s+/)[0] || ''; }
+function wordCount(s) { var m = String(s || '').trim().match(/\S+/g); return m ? m.length : 0; }
+function fillTokens(tpl, map) { return String(tpl).replace(/\{(\w+)\}/g, function (m, k) { return map[k] != null ? map[k] : ''; }); }
+
+function formatDate(iso, lang) {
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso || ''));
+  if (!m) return '';
+  var mo = +m[2] - 1;
+  if (mo < 0 || mo > 11) return '';
+  return (+m[3]) + ' ' + (lang === 'hi' ? MONTHS_HI : MONTHS_EN)[mo];
+}
+
+/* ---------- Rich messages, links and greeting data ---------- */
+var LINKLINES = {
+  en: {
+    warm: ['I made a little Diwali surprise just for you. Tap to light your diya:', 'A small surprise is waiting for you. Light your diya here:'],
+    professional: ['We have prepared a personal Diwali greeting for you:', 'Please open your personal Diwali greeting here:'],
+    fun: ['Plot twist: there is a surprise with your name written in fireworks! Tap here:', 'Tap to light your diya and watch your name light up the sky:']
+  },
+  hinglish: {
+    warm: ['Humne aapke liye ek chhota sa Diwali surprise banaya hai. Diya jalane ke liye yahan tap karein:', 'Ek chhota surprise aapka intezaar kar raha hai. Yahan diya jalaiye:'],
+    professional: ['Humne aapke liye ek khaas Diwali sandesh taiyaar kiya hai:', 'Aapka vyaktigat Diwali sandesh yahan dekhein:'],
+    fun: ['Surprise! Aasmaan mein aapka naam likha hai, yahan tap karo:', 'Diya jalao aur dekho aapka naam kaise chamakta hai:']
+  },
+  hi: {
+    warm: ['हमने आपके लिए एक छोटा सा दिवाली सरप्राइज़ बनाया है। दीया जलाने के लिए यहाँ टैप करें:', 'एक छोटा सरप्राइज़ आपका इंतज़ार कर रहा है। यहाँ दीया जलाइए:'],
+    professional: ['हमने आपके लिए एक ख़ास दीपावली संदेश तैयार किया है:', 'आपका व्यक्तिगत दीपावली संदेश यहाँ देखें:'],
+    fun: ['सरप्राइज़! आसमान में आपका नाम लिखा है, यहाँ टैप करो:', 'दीया जलाओ और देखो आपका नाम कैसे चमकता है:']
+  }
+};
+var CLAIM = { en: 'Reply *{k}* to claim it.', hinglish: 'Claim karne ke liye *{k}* likhkar reply karein.', hi: 'पाने के लिए *{k}* लिखकर जवाब दें।' };
+var EMO = { warm: '🪔✨', professional: '🪔', fun: '🎆🪔' };
+
+/* Rich structures: banner, paragraphs, offer, link and sign-off, in 12 different orders. */
+var STRUCTS_RICH = [
+  '{banner}\n\n{greet} {wish} {lamp}\n\n{thanks}\n\n{offer}\n\n{linkline}\n\n{close}',
+  '{banner}\n\n{greet}\n{thanks} {wish}\n\n{lamp}\n\n{offer}\n\n{linkline}\n\n{close}',
+  '{greet}\n\n{wish} {wish2}\n\n{thanks} {offer}\n\n{banner}\n\n{linkline}\n\n{close}',
+  '{banner}\n{greet}\n\n{thanks}\n\n{wish} {lamp}\n\n{offer}\n\n{linkline}\n\n{close}',
+  '{greet}\n\n{thanks} {lamp}\n\n{banner}\n{wish}\n\n{offer}\n\n{linkline}\n\n{close}',
+  '{banner}\n\n{greet} {thanks}\n\n{wish} {wish2}\n\n{offer}\n\n{linkline}\n{close}',
+  '{greet} {banner}\n\n{wish} {thanks}\n\n{lamp}\n\n{offer}\n\n{linkline}\n\n{close}',
+  '{banner}\n\n{greet}\n{lamp} {wish}\n\n{thanks}\n\n{offer}\n\n{close}\n\n{linkline}',
+  '{greet}\n\n{wish}\n\n{thanks} {lamp}\n\n{offer}\n\n{banner}\n\n{linkline}\n{close}',
+  '{banner}\n\n{greet} {wish}\n\n{thanks}\n\n{wish2} {lamp}\n\n{offer}\n\n{linkline}\n\n{close}',
+  '{greet}\n\n{banner}\n\n{thanks} {wish}\n\n{offer}\n\n{lamp}\n\n{linkline}\n\n{close}',
+  '{banner}\n\n{greet}\n\n{thanks} {wish2}\n\n{wish} {lamp}\n\n{offer}\n\n{linkline}\n\n{close}'
+];
+
+function hashStr(s) {
+  var h = 2166136261; s = String(s);
+  for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+function stripEmoji(s) {
+  return String(s).replace(/[☀-➿]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDEFF]|\uD83E[\uDC00-\uDFFF]/g, '').replace(/\s+/g, ' ').trim();
+}
+function pickOther(rng, arr, notVal) {
+  if (arr.length < 2) return arr[0];
+  var v, tries = 0;
+  do { v = pickFrom(rng, arr); tries++; } while (v === notVal && tries < 10);
+  return v;
+}
+
+/* Fills every token for one customer. fmt adds WhatsApp bold around the offer. */
+function composeParts(cust, biz, idx, salt, fmt) {
+  var lang = BANKS[biz.lang] ? biz.lang : 'en';
+  var tone = BANKS[lang][biz.tone] ? biz.tone : 'warm';
+  var bank = BANKS[lang][tone];
+  var rng = mulberry32((idx + 1) * 7919 + (salt || 0) * 104729 + 13);
+  var first = firstName(cust.name);
+  var honor = lang === 'hi' ? 'जी' : 'ji';
+  var o = (biz.offer || '').trim().replace(/[.!\s]+$/, '');
+  var vars = {
+    n: first ? first + ' ' + honor : '',
+    p: (cust.last || '').trim(),
+    c: (cust.city || '').trim(),
+    s: (biz.sell || '').trim(),
+    o: (fmt && o) ? '*' + o + '*' : o,
+    u: ''
+  };
+  var dateTxt = formatDate(biz.until, lang);
+  if (o && dateTxt) vars.u = fillTokens(UNTIL[lang], { d: dateTxt });
+
+  var map = {};
+  map.greet = vars.n ? fillTokens(pickFrom(rng, bank.greet), vars) : '';
+  var headlineRaw = pickFrom(rng, bank.headline);
+  map.headline = headlineRaw;
+  map.banner = EMO[tone] + ' *' + stripEmoji(headlineRaw) + '* ' + EMO[tone];
+  var wishRaw = pickFrom(rng, bank.wish);
+  map.wish = wishRaw;
+  map.wish2 = pickOther(rng, bank.wish, wishRaw);
+  map.lamp = pickFrom(rng, bank.lamp);
+  map.close = pickFrom(rng, bank.close);
+  var offerLine = o ? fillTokens(pickFrom(rng, bank.offer), vars) : '';
+  if (o && biz.claim) offerLine += ' ' + fillTokens(CLAIM[lang], { k: String(biz.claim).trim() });
+  map.offer = offerLine;
+
+  var key;
+  if (vars.p && vars.c) { var r = rng(); key = r < 0.5 ? 'thanksPC' : (r < 0.75 ? 'thanksP' : 'thanksC'); }
+  else if (vars.p) key = 'thanksP';
+  else if (vars.c) key = 'thanksC';
+  else if (vars.s && rng() < 0.6) key = 'thanksS';
+  else key = 'thanksN';
+  map.thanks = fillTokens(pickFrom(rng, bank[key]), vars);
+  map.linkline = cust.link ? pickFrom(rng, LINKLINES[lang][tone]) + '\n' + cust.link : '';
+  return { map: map, vars: vars, lang: lang, tone: tone, dateTxt: dateTxt };
+}
+
+/* Builds one message. skip lists token names to drop when the text runs past the word limit. */
+function buildMessage(cust, biz, idx, salt, skip) {
+  skip = skip || [];
+  var rich = biz.size !== 'short';
+  var P = composeParts(cust, biz, idx, salt, true);
+  var map = P.map;
+  for (var i = 0; i < skip.length; i++) map[skip[i]] = '';
+  var list = rich ? STRUCTS_RICH : STRUCTS;
+  var tpl = list[(idx * 5 + (salt || 0) * 7) % list.length];
+  var body = fillTokens(tpl, map);
+  if (!rich && map.linkline) body = body.replace(/\s+$/, '') + '\n' + map.linkline;
+  var sign;
+  var me = (biz.me || '').trim(), bn = (biz.name || '').trim();
+  if (me && bn) sign = '— ' + me + ', ' + bn; else if (bn) sign = '— ' + bn; else if (me) sign = '— ' + me; else sign = '— Team';
+  var tail = biz.optout ? OPTOUT[P.lang] + '\n\n' : '';
+  var text = body.replace(/[ \t]+/g, ' ').replace(/ *\n */g, '\n');
+  text = rich ? text.replace(/\n{3,}/g, '\n\n') : text.replace(/\n{2,}/g, '\n');
+  text = text.trim();
+  return (text + '\n\n' + tail + sign).replace(/\n{3,}/g, '\n\n');
+}
+
+function buildWithinLimit(cust, biz, idx, salt, limit) {
+  var rich = biz.size !== 'short';
+  limit = limit || (rich ? 120 : (cust.link ? 78 : 59));
+  var levels = rich
+    ? [[], ['close'], ['close', 'wish2'], ['close', 'wish2', 'lamp'], ['close', 'wish2', 'lamp', 'banner'], ['close', 'wish2', 'lamp', 'banner', 'wish']]
+    : [[], ['close'], ['close', 'lamp'], ['close', 'lamp', 'headline'], ['close', 'lamp', 'headline', 'wish'], ['close', 'lamp', 'headline', 'wish', 'thanks']];
+  var out = '';
+  for (var i = 0; i < levels.length; i++) {
+    out = buildMessage(cust, biz, idx, salt, levels[i]);
+    if (wordCount(out) <= limit) return out;
+  }
+  return out;
+}
+
+function greetingPayload(biz, c) {
+  var o = { n: c.name, b: biz.name, m: biz.me, l: biz.lang, t: biz.tone, o: biz.offer, u: biz.until, k: biz.claim, p: biz.wa, pu: c.last, c: c.city };
+  Object.keys(o).forEach(function (k) { if (o[k] == null || String(o[k]).trim() === '') delete o[k]; else o[k] = String(o[k]).trim().slice(0, 160); });
+  return o;
+}
+function b64urlEncode(str) {
+  var bytes = new TextEncoder().encode(str), bin = '';
+  for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function b64urlDecode(s) {
+  s = String(s).replace(/-/g, '+').replace(/_/g, '/');
+  while (s.length % 4) s += '=';
+  var bin = atob(s), bytes = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function makeGreetingUrl(base, biz, c) {
+  return String(base).replace(/#.*$/, '') + '#g=' + b64urlEncode(JSON.stringify(greetingPayload(biz, c)));
+}
+function parseGreetingHash(h) {
+  var m = /^#g=([A-Za-z0-9_-]+)$/.exec(String(h || ''));
+  if (!m) return null;
+  try {
+    var o = JSON.parse(b64urlDecode(m[1]));
+    if (!o || typeof o.n !== 'string' || !o.n.trim()) return null;
+    var clean = {};
+    ['n', 'b', 'm', 'l', 't', 'o', 'u', 'k', 'p', 'pu', 'c'].forEach(function (k) { if (typeof o[k] === 'string') clean[k] = o[k].slice(0, 160); });
+    if (!BANKS[clean.l]) clean.l = 'en';
+    if (!BANKS[clean.l][clean.t]) clean.t = 'warm';
+    if (clean.p && !/^\d{8,15}$/.test(clean.p)) delete clean.p;
+    return clean;
+  } catch (e) { return null; }
+}
+
+/* What the wish page shows, in the same wording family as the message. */
+function greetingParts(g) {
+  g = g || {};
+  var cust = { name: g.n || 'Friend', last: g.pu || '', city: g.c || '' };
+  var biz = { name: g.b || '', me: g.m || '', lang: g.l || 'en', tone: g.t || 'warm', offer: g.o || '', until: g.u || '', claim: g.k || '' };
+  var P = composeParts(cust, biz, hashStr(cust.name) % 97, 0, false);
+  var me = biz.me.trim(), bn = biz.name.trim();
+  return {
+    lang: P.lang, tone: P.tone,
+    display: P.vars.n || cust.name, first: firstName(cust.name),
+    headline: stripEmoji(P.map.headline), thanks: P.map.thanks,
+    wish: P.map.wish + ' ' + P.map.lamp, close: P.map.close,
+    offer: P.vars.o, until: P.dateTxt, claim: biz.claim.trim(),
+    biz: bn, me: me, sign: me && bn ? me + ', ' + bn : (bn || me || '')
+  };
+}
+
+function generateAll(customers, biz, salt) {
+  var seen = {};
+  return customers.map(function (c, i) {
+    var cc = { name: c.name, phone: c.phone, last: c.last, city: c.city, link: biz.base ? makeGreetingUrl(biz.base, biz, c) : '' };
+    var text = '', a = 0;
+    do { text = waText(buildWithinLimit(cc, biz, i, (salt || 0) + a * 3)); a++; } while (seen[text] && a < 12);
+    seen[text] = true;
+    return text;
+  });
+}
+
+/* A rangoli that is unique to the seed (a name). anim draws it in; mini makes a light version for small avatars. */
+function rangoliSVG(seed, opt) {
+  opt = opt || {};
+  var anim = !!opt.anim, mini = !!opt.mini;
+  var rng = mulberry32(hashStr(seed) || 7);
+  var pals = [['#f4c95d', '#ff8a3d', '#e6458f'], ['#ffd166', '#ff4d9d', '#b388ff'], ['#ffe9a6', '#ff7b00', '#38d6c9'], ['#f4c95d', '#e63946', '#ff9f1c'], ['#ffd166', '#c77dff', '#ff6b9a']];
+  function pc(a) { return a[Math.floor(rng() * a.length)]; }
+  var pal = pc(pals);
+  var cs = mini ? [6, 8, 10, 12] : [8, 10, 12, 16, 18, 24];
+  var nA = pc(cs), nB = pc(cs), nC = pc(mini ? [6, 8] : [6, 8, 10, 12]);
+  var wA = 7 + rng() * 6, wB = 16 + rng() * 10, wC = 9 + rng() * 6, wD = 6 + rng() * 3;
+  var rB = 44 + rng() * 14, rC = 28 + rng() * 6;
+  var out = [], delay = 0;
+  function at(fillCol, d) {
+    if (!anim) return ' class="rs" style="fill:' + (fillCol || 'none') + '"';
+    return ' class="stroke' + (fillCol ? ' soft' : '') + '" pathLength="1" stroke-dasharray="1" style="--d:' + d.toFixed(2) + 's;fill:' + (fillCol || 'none') + '"';
+  }
+  function petal(r1, r2, w, a, col, fill, d) {
+    var mid = (r1 + r2) / 2;
+    return '<path' + at(fill, d) + ' stroke="' + col + '" transform="rotate(' + a.toFixed(1) + ')" d="M0 ' + (-r1) + ' Q' + w.toFixed(1) + ' ' + (-mid) + ' 0 ' + (-r2) + ' Q' + (-w).toFixed(1) + ' ' + (-mid) + ' 0 ' + (-r1) + 'Z"/>';
+  }
+  var k;
+  out.push('<circle' + at(null, 0) + ' stroke="' + pal[0] + '" r="142"/>');
+  if (!mini) {
+    out.push('<circle' + at(null, 0.2) + ' stroke="' + pal[0] + '" stroke-opacity=".6" r="134"/>');
+    for (k = 0; k < nC * 2; k++) out.push('<circle' + at(pal[0], 0.5 + k * 0.03) + ' stroke="' + pal[0] + '" cx="0" cy="-138" r="1.8" transform="rotate(' + (k * 360 / (nC * 2) + 3) + ')"/>');
+  }
+  for (k = 0; k < nA; k++) out.push(petal(104, 132, wA, k * 360 / nA, pal[1], 'rgba(255,138,61,.16)', 0.3 + k * 0.03));
+  for (k = 0; k < nB; k++) out.push(petal(rB, 100, wB, k * 360 / nB, pal[2], 'rgba(230,69,143,.18)', 0.8 + k * 0.04));
+  for (k = 0; k < nA; k++) out.push(petal(rC, 72, wC, k * 360 / nA + 180 / nA, pal[0], 'rgba(244,201,93,.16)', 1.1 + k * 0.04));
+  for (k = 0; k < nC; k++) out.push(petal(8, 38, wD, k * 360 / nC, '#ffe9a6', 'rgba(255,233,166,.24)', 1.6 + k * 0.04));
+  out.push('<circle' + at('rgba(244,201,93,.55)', 2) + ' stroke="' + pal[0] + '" r="8"/>');
+  var sw = opt.sw || (mini ? 6 : 1.2);
+  return '<svg viewBox="-150 -150 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" stroke-width="' + sw + '" stroke-linecap="round">' + out.join('') + '</svg>';
+}
+
+/* ---------- Parsing ---------- */
+function normalizePhone(raw) {
+  var s = String(raw || '').trim();
+  var digits = s.replace(/\D/g, '');
+  if (/^\+/.test(s) && !/^\+\s*91/.test(s)) return digits.length >= 8 && digits.length <= 15 ? digits : '';
+  if (digits.length === 10 && /^[6-9]/.test(digits)) return '91' + digits;
+  if (digits.length === 11 && digits[0] === '0' && /^[6-9]/.test(digits[1])) return '91' + digits.slice(1);
+  if (digits.length === 12 && digits.slice(0, 2) === '91' && /^[6-9]/.test(digits[2])) return digits;
+  if (digits.length === 14 && digits.slice(0, 4) === '0091' && /^[6-9]/.test(digits[4])) return digits.slice(2);
+  return '';
+}
+function prettyPhone(p) {
+  if (p.length === 12 && p.slice(0, 2) === '91') return '+91 ' + p.slice(2, 7) + ' ' + p.slice(7);
+  return '+' + p;
+}
+function splitLine(line, delim) {
+  var out = [], cur = '', q = false;
+  for (var i = 0; i < line.length; i++) {
+    var ch = line[i];
+    if (q) { if (ch === '"') { if (line[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
+    else if (ch === '"') q = true;
+    else if (ch === delim) { out.push(cur); cur = ''; }
+    else cur += ch;
+  }
+  out.push(cur);
+  return out.map(function (s) { return s.trim(); });
+}
+function headerMap(cells) {
+  var m = { name: -1, phone: -1, last: -1, city: -1 };
+  cells.forEach(function (c, i) {
+    if (m.name < 0 && /name|customer/i.test(c)) m.name = i;
+    else if (m.phone < 0 && /phone|mobile|whatsapp|contact|number/i.test(c)) m.phone = i;
+    else if (m.last < 0 && /purchase|item|product|bought|order/i.test(c)) m.last = i;
+    else if (m.city < 0 && /city|town|location|place/i.test(c)) m.city = i;
+  });
+  var used = {}; Object.keys(m).forEach(function (k) { if (m[k] >= 0) used[m[k]] = true; });
+  var defs = { name: 0, phone: 1, last: 2, city: 3 };
+  Object.keys(m).forEach(function (k) { if (m[k] < 0) m[k] = used[defs[k]] ? -1 : defs[k]; });
+  return m;
+}
+function parseCustomers(text) {
+  var lines = String(text || '').replace(/\r/g, '').split('\n');
+  var rows = [], bad = [];
+  var map = { name: 0, phone: 1, last: 2, city: 3 };
+  var first = true;
+  lines.forEach(function (raw, li) {
+    if (!raw.trim()) return;
+    var delim = raw.indexOf('\t') >= 0 ? '\t' : (raw.indexOf(',') >= 0 ? ',' : (raw.indexOf(';') >= 0 ? ';' : '\t'));
+    var cells = splitLine(raw, delim);
+    if (first) {
+      first = false;
+      var hasPhone = cells.some(function (c) { return c.replace(/\D/g, '').length >= 8; });
+      var looksHeader = cells.some(function (c) { return /^(customer|name|phone|mobile|whatsapp|contact|number)/i.test(c); });
+      if (looksHeader && !hasPhone) { map = headerMap(cells); return; }
+    }
+    function at(k) { var ix = map[k]; return ix >= 0 && ix < cells.length ? cells[ix] : ''; }
+    var name = at('name'), phoneRaw = at('phone'), last = at('last'), city = at('city');
+    if (cells.length === 1) {
+      var mm = /(\+?\d[\d\s\-]{8,}\d)/.exec(raw);
+      if (mm) { phoneRaw = mm[1]; name = raw.replace(mm[1], '').replace(/[,;\-]+\s*$/, '').trim(); }
+    }
+    if (!normalizePhone(phoneRaw) && normalizePhone(name)) { var t = name; name = phoneRaw; phoneRaw = t; }
+    var phone = normalizePhone(phoneRaw);
+    var snippet = raw.trim().slice(0, 40);
+    if (!name) { bad.push({ line: li + 1, reason: 'name is missing', text: snippet }); return; }
+    if (!phone) { bad.push({ line: li + 1, reason: phoneRaw ? 'phone number is not valid' : 'phone number is missing', text: snippet }); return; }
+    rows.push({ name: name, phone: phone, last: last, city: city, line: li + 1 });
+  });
+  return { rows: rows, bad: bad };
+}
+var NO_EMOJI = true;
+function waText(t) {
+  t = String(t);
+  if (!NO_EMOJI) return t;
+  return t.replace(/(?:[\u2190-\u21FF\u2300-\u23FF\u2600-\u27BF\u2B00-\u2BFF\u{1F000}-\u{1FFFF}\uFE0F\u200D])+ ?/gu, '').replace(/ +\*(\n|$)/g, '*$1').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+function enc(t) { return encodeURIComponent(waText(t)); }
+function waLink(phone, text) { return 'https://wa.me/' + phone + '?text=' + enc(text); }
+function csvCell(v) { v = String(v == null ? '' : v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+function toCSV(items) {
+  var out = ['name,phone,message,sent'];
+  items.forEach(function (it) { out.push([it.name, '+' + it.phone, it.text, it.sent ? 'yes' : 'no'].map(csvCell).join(',')); });
+  return out.join('\n');
+}
+var SAMPLE_CUSTOMERS = 'Name,Phone,Last purchase,City\nAarti Sharma,9000000001,Kaju Katli box,Meerut\nRohan Verma,9000000002,Soan Papdi,Ghaziabad\nPriya Nair,9000000003,Diwali gift hamper,Kochi\nImran Qureshi,9000000004,Dry fruit box,Lucknow\nSunita Devi,9000000005,Motichoor laddoo,Patna\nKaran Mehta,9000000006,Assorted mithai box,Surat\nLakshmi Iyer,9000000007,Mysore pak,Chennai\nGurpreet Singh,9000000008,Besan laddoo,Ludhiana';
+</script>
+
+<script id="ui">
+/* ---------- UI ---------- */
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var reduced = false;
+  try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+  var narrow = window.innerWidth < 600;
+  var hosted = false;
+  try { hosted = window.top === window.self && /^https?:/.test(location.protocol); } catch (e) {}
+  function rand(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function h(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  /* ===== Diya markup ===== */
+  function diyaHTML(lit) {
+    var del = (Math.random() * 1.2).toFixed(2), dur = (1.1 + Math.random() * 0.9).toFixed(2);
+    return '<div class="diya' + (lit ? ' lit' : '') + '" style="--del:-' + del + 's;--dur:' + dur + 's">' +
+      '<svg class="diya-svg" viewBox="0 0 64 64" aria-hidden="true">' +
+      '<circle class="glow" cx="32" cy="24" r="26" fill="url(#gGlow)"/>' +
+      '<g class="bowl"><path d="M5 35 C9 53 21 59 32 59 C43 59 55 53 59 35 C48 41 16 41 5 35 Z" fill="url(#gClay)"/>' +
+      '<ellipse cx="32" cy="35" rx="27" ry="5.5" fill="#c8561f"/><ellipse cx="32" cy="34.2" rx="23" ry="3.4" fill="#5a2208"/>' +
+      '<path d="M12 46 Q32 56 52 46" fill="none" stroke="#ffd27a" stroke-opacity="0.55" stroke-width="1.4" stroke-linecap="round"/></g>' +
+      '<rect x="31" y="27" width="2" height="8" rx="1" fill="#2a1608"/>' +
+      '<path class="flame" d="M32 5 C39 14 41 22 32 31 C23 22 25 14 32 5 Z" fill="url(#gFlame)"/>' +
+      '<path class="flame2" d="M32 16 C35.4 21 36 25 32 29.5 C28 25 28.6 21 32 16 Z" fill="#fff3c4"/></svg></div>';
+  }
+
+  /* ===== Decorations ===== */
+  function toranSVG() {
+    var W = 1200, n = 5, aw = W / n, p = [], cols = ['mgA', 'mgB', 'mgC'], i, j;
+    for (i = 0; i < n; i++) {
+      var x0 = i * aw, x1 = x0 + aw, cx = x0 + aw / 2, y0 = 12, cy = 108;
+      p.push('<g class="sway" style="--sd:' + (5 + i * 0.7).toFixed(1) + 's;--sdel:-' + (i * 0.9).toFixed(1) + 's">');
+      p.push('<path d="M' + x0 + ' ' + y0 + ' Q' + cx + ' ' + cy + ' ' + x1 + ' ' + y0 + '" fill="none" stroke="#c98a1a" stroke-width="1.6"/>');
+      var m = 11;
+      for (j = 1; j <= m; j++) {
+        var t = j / (m + 1), px = (1 - t) * (1 - t) * x0 + 2 * (1 - t) * t * cx + t * t * x1, py = (1 - t) * (1 - t) * y0 + 2 * (1 - t) * t * cy + t * t * y0;
+        if (j % 2 === 0) p.push('<path d="M0 0 q7 -9 16 -2 q-7 9 -16 2z" fill="#2f9e5a" transform="translate(' + (px - 8).toFixed(1) + ',' + (py + 6).toFixed(1) + ') rotate(' + (j * 17 % 50 - 10) + ')"/>');
+        p.push('<use href="#' + cols[j % 3] + '" x="' + (px - 11).toFixed(1) + '" y="' + (py - 11).toFixed(1) + '" width="22" height="22"/>');
+      }
+      p.push('</g>');
+    }
+    for (i = 0; i <= n; i++) {
+      var tx = i * aw;
+      p.push('<g class="sway" style="--sd:' + (4 + i * 0.5).toFixed(1) + 's;--sdel:-' + (i * 0.7).toFixed(1) + 's"><line x1="' + tx + '" y1="12" x2="' + tx + '" y2="44" stroke="#c98a1a" stroke-width="1.4"/>' +
+        '<path d="M' + (tx - 8) + ' 58 C' + (tx - 8) + ' 44 ' + (tx + 8) + ' 44 ' + (tx + 8) + ' 58 Z" fill="#f4c95d" stroke="#b8741a" stroke-width="0.8"/><circle cx="' + tx + '" cy="61" r="2.6" fill="#b8741a"/></g>');
+    }
+    var lc = ['#ffd166', '#ff8a3d', '#ff4d9d', '#7df9ff', '#b388ff'], d = '';
+    for (var x = 0; x <= W; x += 14) d += (x ? ' L' : 'M') + x + ' ' + (126 + 8 * Math.sin(x / 38)).toFixed(1);
+    p.push('<path d="' + d + '" fill="none" stroke="#7a5a1a" stroke-width="1"/>');
+    for (var b = 0, bx = 10; bx < W; bx += 30, b++) {
+      var by = 126 + 8 * Math.sin(bx / 38) + 5, col = lc[b % lc.length], bd = (1 + (b * 0.37) % 1.6).toFixed(2);
+      p.push('<circle class="halo" style="--bd:' + bd + 's" cx="' + bx + '" cy="' + by.toFixed(1) + '" r="9" fill="' + col + '"/><circle class="bulb" style="--bd:' + bd + 's" cx="' + bx + '" cy="' + by.toFixed(1) + '" r="3.6" fill="' + col + '"/>');
+    }
+    return '<svg viewBox="0 0 1200 146" preserveAspectRatio="xMidYMin slice" xmlns="http://www.w3.org/2000/svg">' + p.join('') + '</svg>';
+  }
+  $('toran').innerHTML = toranSVG();
+  $('gToran').innerHTML = toranSVG();
+  $('jhL').innerHTML = '<div class="chain"></div>' + diyaHTML(true) + '<div class="chain short"></div>' + diyaHTML(true);
+  $('jhR').innerHTML = '<div class="chain short"></div>' + diyaHTML(true) + '<div class="chain"></div>' + diyaHTML(true);
+  $('mandala').innerHTML = rangoliSVG('diwali-2026-wish', { anim: true, sw: 1.1 });
+  var NICHE = '<svg class="arch" viewBox="0 0 100 84" aria-hidden="true"><path d="M5 84 V42 C5 24 32 18 50 2 C68 18 95 24 95 42 V84 Z" fill="#1c1560"/><path d="M5 84 V42 C5 24 32 18 50 2 C68 18 95 24 95 42 V84" fill="none" stroke="#f4c95d" stroke-width="2" stroke-linejoin="round"/><path d="M11 84 V43 C11 28 34 22 50 9 C66 22 89 28 89 43 V84" fill="none" stroke="#f4c95d" stroke-opacity=".45" stroke-width="1"/></svg>';
+  document.querySelectorAll('.panel').forEach(function (pn) {
+    var n = document.createElement('div'); n.className = 'niche'; n.setAttribute('aria-hidden', 'true'); n.innerHTML = NICHE + diyaHTML(true); pn.insertBefore(n, pn.firstChild);
+    [['tl', 'mgB'], ['tr', 'mgA'], ['br', 'mgC'], ['bl', 'mgB']].forEach(function (pc) {
+      var c = document.createElement('div'); c.className = 'corner ' + pc[0]; c.innerHTML = '<svg aria-hidden="true"><use href="#' + pc[1] + '"/></svg>'; pn.appendChild(c);
+    });
+  });
+  (function () { var f = ''; for (var i = 0; i < 7; i++) f += diyaHTML(true); $('footDiyas').innerHTML = f; })();
+
+  /* ===== Countdown ===== */
+  var target = new Date('2026-11-08T00:00:00+05:30').getTime();
+  function tickCountdown() {
+    var diff = target - Date.now(), box = $('countdown');
+    if (diff <= 0) { box.innerHTML = '<p class="cd-done">Shubh Deepavali</p>'; $('cdNote').textContent = 'Diwali is here. Send your wishes today.'; return; }
+    var d = Math.floor(diff / 864e5), hh = Math.floor(diff / 36e5) % 24, m = Math.floor(diff / 6e4) % 60, s = Math.floor(diff / 1e3) % 60;
+    var cells = [['Days', d], ['Hours', hh], ['Min', m], ['Sec', s]];
+    if (!box.firstChild || box.firstChild.className !== 'cd-cell') box.innerHTML = cells.map(function (c) { return '<div class="cd-cell"><b></b><span>' + c[0] + '</span></div>'; }).join('');
+    var bs = box.querySelectorAll('b');
+    for (var i = 0; i < 4; i++) bs[i].textContent = String(cells[i][1]).padStart(2, '0');
+  }
+  tickCountdown(); setInterval(tickCountdown, 1000);
+
+  /* ===== Canvas effects ===== */
+  var bg = $('bg'), fx = $('fx'), bctx = null, fctx = null;
+  try { bctx = bg.getContext('2d'); fctx = fx.getContext('2d'); } catch (e) {}
+  var W = window.innerWidth, H = window.innerHeight, DPR = Math.min(2, window.devicePixelRatio || 1);
+  function sizeCanvases() {
+    W = window.innerWidth; H = window.innerHeight; narrow = W < 600;
+    [bg, fx].forEach(function (c) { c.width = Math.round(W * DPR); c.height = Math.round(H * DPR); });
+  }
+  sizeCanvases();
+  var rt; window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(sizeCanvases, 150); });
+
+  function makeSprite(size, draw) { var c = document.createElement('canvas'); c.width = c.height = size; var x = c.getContext('2d'); if (x) draw(x, size); return c; }
+  var dotSprites = {}, petalSprite = null, petalSoft = null, starSprite = null;
+  if (bctx) {
+    ['#ffd166', '#ff8a3d', '#ff4d9d', '#fff4d6', '#b388ff', '#25d366'].forEach(function (col) {
+      dotSprites[col] = makeSprite(32, function (x, s) {
+        var g = x.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+        g.addColorStop(0, '#ffffff'); g.addColorStop(0.25, col); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, s, s);
+      });
+    });
+    var petalDraw = function (blur) {
+      return function (x, s) {
+        if (blur && 'filter' in x) x.filter = 'blur(2px)';
+        var g = x.createLinearGradient(0, 0, s, s); g.addColorStop(0, '#ffc84a'); g.addColorStop(1, '#e8590c');
+        x.fillStyle = g; x.beginPath(); x.moveTo(s * 0.5, s * 0.08); x.bezierCurveTo(s * 0.95, s * 0.3, s * 0.85, s * 0.8, s * 0.5, s * 0.94); x.bezierCurveTo(s * 0.15, s * 0.8, s * 0.05, s * 0.3, s * 0.5, s * 0.08); x.fill();
+      };
+    };
+    petalSprite = makeSprite(40, petalDraw(false)); petalSoft = makeSprite(40, petalDraw(true));
+    starSprite = makeSprite(40, function (x, s) {
+      var c = s / 2, g = x.createRadialGradient(c, c, 0, c, c, c);
+      g.addColorStop(0, 'rgba(255,244,214,1)'); g.addColorStop(0.3, 'rgba(255,209,102,.7)'); g.addColorStop(1, 'rgba(255,209,102,0)');
+      x.fillStyle = g; x.beginPath(); x.moveTo(c, 0); x.quadraticCurveTo(c, c, s, c); x.quadraticCurveTo(c, c, c, s); x.quadraticCurveTo(c, c, 0, c); x.quadraticCurveTo(c, c, c, 0); x.fill();
+    });
+  }
+
+  var petals = [], twinkles = [];
+  function mkPetal(init) {
+    var z = 0.25 + Math.random() * 0.75;
+    return { bx: Math.random() * W, y: init ? Math.random() * H : -30, z: z, s: 8 + z * 14, vy: 16 + z * 46, ph: Math.random() * 6.28, sw: 10 + Math.random() * 26, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 1.6, soft: z < 0.5 };
+  }
+  (function initBg() {
+    var n = narrow ? 16 : 30;
+    if ((navigator.hardwareConcurrency || 8) <= 4) n = Math.round(n * 0.7);
+    for (var i = 0; i < n; i++) petals.push(mkPetal(true));
+    for (var j = 0; j < (narrow ? 14 : 26); j++) twinkles.push({ x: Math.random() * W, y: Math.random() * H, s: 6 + Math.random() * 12, ph: Math.random() * 6.28, sp: 0.6 + Math.random() * 1.4 });
+  })();
+  function petalShower(n) {
+    if (reduced || !bctx) return;
+    for (var i = 0; i < n; i++) { var q = mkPetal(false); q.y = -Math.random() * H * 0.7 - 20; q.extra = true; q.vy *= 1.9; q.z = Math.max(q.z, 0.6); q.soft = false; petals.push(q); }
+    startLoop();
+  }
+
+  var parts = [], rockets = [], rings = [], sparks = [], namePts = [];
+  var palettes = [['#ffd166', '#fff4d6'], ['#ff4d9d', '#ff8a3d'], ['#ff8a3d', '#ffd166', '#fff4d6'], ['#b388ff', '#ff4d9d', '#fff4d6']];
+
+  function burst(x, y, n, pal) {
+    if (reduced || !fctx) return;
+    n = n || (narrow ? 50 : 86); pal = pal || rand(palettes);
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * 6.283, sp = Math.sqrt(Math.random()) * (narrow ? 4.4 : 5.6) + 0.8;
+      parts.push({ x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, decay: 0.008 + Math.random() * 0.012, c: rand(pal), s: 7 + Math.random() * 7 });
+    }
+    startLoop();
+  }
+  function rocket(x, ty, cb) {
+    if (reduced || !fctx) { if (cb) cb(); return; }
+    rockets.push({ x: x, y: H + 10, vy: -Math.max(7, (H + 10 - ty) * 0.0173), ty: ty, cb: cb });
+    startLoop();
+  }
+  function ripple(x, y) {
+    if (reduced || !fctx) return;
+    rings.push({ x: x, y: y, r: 4, life: 1 });
+    for (var i = 0; i < 6; i++) { var a = Math.random() * 6.283, s = 0.8 + Math.random() * 1.8; sparks.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 0.4, life: 1, size: 10 + Math.random() * 12 }); }
+    startLoop();
+  }
+  /* Fireworks that spell a name: sample the pixels of the text and fly a spark to every point. */
+  function spellName(text, cx, cy, maxW) {
+    if (reduced || !fctx) return;
+    var off = document.createElement('canvas'), x = off.getContext('2d'); if (!x) return;
+    var size = 110, font = size + 'px "Yatra One","Hind","Noto Sans Devanagari",serif';
+    x.font = font; var tw = Math.max(20, x.measureText(text).width);
+    off.width = Math.ceil(tw) + 24; off.height = Math.ceil(size * 1.5);
+    x.font = font; x.fillStyle = '#fff'; x.textBaseline = 'alphabetic'; x.fillText(text, 12, size * 1.08);
+    var img; try { img = x.getImageData(0, 0, off.width, off.height).data; } catch (e) { return; }
+    var cnt = 0, i; for (i = 3; i < img.length; i += 4) if (img[i] > 140) cnt++;
+    var step = Math.max(2, Math.round(Math.sqrt(cnt / (narrow ? 330 : 520))));
+    var scale = Math.min(maxW / off.width, 1.4);
+    for (var yy = 0; yy < off.height; yy += step) for (var xx = 0; xx < off.width; xx += step) {
+      if (img[(yy * off.width + xx) * 4 + 3] > 140) {
+        namePts.push({ ox: cx, oy: cy, tx: cx + (xx - off.width / 2) * scale, ty: cy + (yy - size * 0.62) * scale, d: Math.random() * 0.45, age: 0, fall: 2.6 + Math.random() * 0.8, vy: 0, fy: 0, c: rand(['#ffd166', '#ffd166', '#fff4d6', '#ff8a3d']), s: 5.5 + Math.random() * 3, ph: Math.random() * 6.28 });
+      }
+    }
+    startLoop();
+  }
+  function nameFireworks(text, el) {
+    var r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    rocket(cx, cy, function () { burst(cx, cy, narrow ? 30 : 46, ['#ffd166', '#fff4d6']); spellName(text, cx, cy, Math.min(W * 0.9, 780)); });
+  }
+  var lastTrail = 0;
+  document.addEventListener('pointerdown', function (e) { ripple(e.clientX, e.clientY); }, { passive: true });
+  document.addEventListener('pointermove', function (e) {
+    if (reduced || e.pointerType !== 'mouse') return;
+    var now = performance.now(); if (now - lastTrail < 45) return; lastTrail = now;
+    sparks.push({ x: e.clientX, y: e.clientY, vx: (Math.random() - 0.5) * 0.6, vy: Math.random() * 0.6, life: 0.8, size: 8 + Math.random() * 8 }); startLoop();
+  }, { passive: true });
+
+  var running = false, last = 0, slow = 0, tAcc = 0;
+  function startLoop() { if (running || reduced || !bctx || document.hidden) return; running = true; last = performance.now(); requestAnimationFrame(tick); }
+  document.addEventListener('visibilitychange', function () { if (document.hidden) running = false; else startLoop(); });
+
+  function tick(now) {
+    if (!running) return;
+    var dt = Math.min(0.05, (now - last) / 1000); last = now; tAcc += dt;
+    var f = dt * 60;
+    if (dt > 0.032) slow++; else if (slow > 0) slow--;
+    if (slow > 90) { var keep = petals.filter(function (q) { return !q.extra; }); if (keep.length > 8) { petals = petals.filter(function (q, i) { return q.extra || i % 2 === 0; }); twinkles.length = Math.ceil(twinkles.length / 2); } slow = 0; }
+
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.clearRect(0, 0, bg.width, bg.height);
+    bctx.globalCompositeOperation = 'lighter';
+    for (var i = 0; i < twinkles.length; i++) {
+      var tw = twinkles[i], a = 0.12 + 0.6 * (0.5 + 0.5 * Math.sin(tAcc * tw.sp + tw.ph));
+      bctx.globalAlpha = a; bctx.drawImage(starSprite, (tw.x - tw.s / 2) * DPR, (tw.y - tw.s / 2) * DPR, tw.s * DPR, tw.s * DPR);
+    }
+    bctx.globalCompositeOperation = 'source-over';
+    for (var p = 0; p < petals.length; p++) {
+      var q = petals[p];
+      q.y += q.vy * dt; q.ph += dt * 0.9; q.rot += q.vr * dt;
+      if (q.y > H + 30) { if (q.extra) { petals.splice(p, 1); p--; continue; } petals[p] = q = mkPetal(false); }
+      var px = q.bx + Math.sin(q.ph) * q.sw, c = Math.cos(q.rot) * DPR, s2 = Math.sin(q.rot) * DPR;
+      bctx.setTransform(c, s2, -s2, c, px * DPR, q.y * DPR);
+      bctx.globalAlpha = q.soft ? 0.4 : 0.55 + q.z * 0.4;
+      bctx.drawImage(q.soft ? petalSoft : petalSprite, -q.s / 2, -q.s / 2, q.s, q.s);
+    }
+    bctx.setTransform(1, 0, 0, 1, 0, 0); bctx.globalAlpha = 1;
+
+    var busy = parts.length || rockets.length || rings.length || sparks.length || namePts.length;
+    fctx.setTransform(DPR, 0, 0, DPR, 0, 0); fctx.clearRect(0, 0, W, H);
+    if (busy) {
+      fctx.globalCompositeOperation = 'lighter';
+      var k;
+      for (k = rockets.length - 1; k >= 0; k--) {
+        var r = rockets[k]; r.y += r.vy * f; r.vy *= Math.pow(0.985, f);
+        sparks.push({ x: r.x + (Math.random() - 0.5) * 2, y: r.y, vx: (Math.random() - 0.5) * 0.4, vy: 0.6, life: 0.6, size: 9 });
+        fctx.globalAlpha = 1; fctx.drawImage(dotSprites['#fff4d6'], r.x - 6, r.y - 6, 12, 12);
+        if (r.y <= r.ty || r.vy > -1.2) { if (r.cb) r.cb(); else burst(r.x, r.y); rockets.splice(k, 1); }
+      }
+      for (k = namePts.length - 1; k >= 0; k--) {
+        var np = namePts[k]; np.age += dt;
+        if (np.age < np.d) continue;
+        var u = Math.min(1, (np.age - np.d) / 1.2), e = 1 - Math.pow(1 - u, 3), al = 1;
+        if (np.age > np.fall) { np.vy += 0.05 * f; np.fy += np.vy * f; al = 1 - (np.age - np.fall) / 1.2; if (al <= 0) { namePts.splice(k, 1); continue; } }
+        var nx = np.ox + (np.tx - np.ox) * e, ny = np.oy + (np.ty - np.oy) * e + np.fy, sz = np.s * (0.75 + 0.35 * Math.sin(np.age * 9 + np.ph));
+        fctx.globalAlpha = al; fctx.drawImage(dotSprites[np.c], nx - sz / 2, ny - sz / 2, sz, sz);
+      }
+      for (k = parts.length - 1; k >= 0; k--) {
+        var pp = parts[k]; pp.vx *= Math.pow(0.972, f); pp.vy = pp.vy * Math.pow(0.972, f) + 0.045 * f;
+        pp.x += pp.vx * f; pp.y += pp.vy * f; pp.life -= pp.decay * f;
+        if (pp.life <= 0) { parts.splice(k, 1); continue; }
+        var alp = Math.min(1, pp.life * 1.4), sp = dotSprites[pp.c], sz2 = pp.s * (0.5 + pp.life * 0.6);
+        fctx.globalAlpha = alp; fctx.drawImage(sp, pp.x - sz2 / 2, pp.y - sz2 / 2, sz2, sz2);
+        fctx.globalAlpha = alp * 0.4; fctx.drawImage(sp, pp.x - pp.vx * 2.2 - sz2 / 3, pp.y - pp.vy * 2.2 - sz2 / 3, sz2 / 1.5, sz2 / 1.5);
+      }
+      for (k = sparks.length - 1; k >= 0; k--) {
+        var sk = sparks[k]; sk.x += sk.vx * f; sk.y += sk.vy * f; sk.vy += 0.02 * f; sk.life -= 0.022 * f;
+        if (sk.life <= 0) { sparks.splice(k, 1); continue; }
+        fctx.globalAlpha = Math.min(1, sk.life * 1.2); fctx.drawImage(starSprite, sk.x - sk.size / 2, sk.y - sk.size / 2, sk.size, sk.size);
+      }
+      fctx.globalCompositeOperation = 'source-over';
+      for (k = rings.length - 1; k >= 0; k--) {
+        var rg = rings[k]; rg.r += 2.6 * f; rg.life -= 0.035 * f;
+        if (rg.life <= 0) { rings.splice(k, 1); continue; }
+        fctx.globalAlpha = rg.life * 0.7; fctx.strokeStyle = '#ffd166'; fctx.lineWidth = 2; fctx.beginPath(); fctx.arc(rg.x, rg.y, rg.r, 0, 6.283); fctx.stroke();
+      }
+      fctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(tick);
+  }
+  startLoop();
+
+  /* ===== Lanterns ===== */
+  var LANTERN = '<svg viewBox="0 0 40 64" width="42" height="68" aria-hidden="true"><path d="M20 2 L20 8" stroke="#ffd166" stroke-width="2"/><rect x="11" y="8" width="18" height="5" rx="2" fill="#ffd166"/><path d="M9 14 H31 C34 26 33 38 29 46 H11 C7 38 6 26 9 14Z" fill="url(#gLant)"/><path d="M15 14 C13 26 14 38 16 46 M25 14 C27 26 26 38 24 46 M20 14 V46" stroke="#fff3c4" stroke-opacity=".55" stroke-width="1" fill="none"/><rect x="11" y="46" width="18" height="4" rx="2" fill="#ffd166"/><path d="M15 50 V60 M20 50 V63 M25 50 V60" stroke="#ffd166" stroke-width="1.6" stroke-linecap="round"/></svg>';
+  function lantern(x, y) {
+    if (reduced) return;
+    var el = document.createElement('div'); el.className = 'lantern'; el.innerHTML = LANTERN; el.style.left = x + 'px'; el.style.top = y + 'px'; document.body.appendChild(el);
+    var rise = -(y + 160), sway = (Math.random() < 0.5 ? -1 : 1) * (30 + Math.random() * 40);
+    if (!el.animate) { setTimeout(function () { el.remove(); }, 100); return; }
+    var an = el.animate([
+      { transform: 'translate(0,0) scale(0.7)', opacity: 0 },
+      { transform: 'translate(' + (sway * 0.3) + 'px,' + (rise * 0.15) + 'px) scale(1)', opacity: 1, offset: 0.12 },
+      { transform: 'translate(' + (-sway * 0.5) + 'px,' + (rise * 0.55) + 'px) scale(0.9)', opacity: 1, offset: 0.55 },
+      { transform: 'translate(' + sway + 'px,' + rise + 'px) scale(0.6)', opacity: 0 }
+    ], { duration: 6200, easing: 'ease-in' });
+    an.onfinish = function () { el.remove(); };
+  }
+
+  /* ===== Toast and copy ===== */
+  var toastT;
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('show'); }, 2400); }
+  function copyText(text, okMsg) {
+    function manual() { var m = $('manual'); m.hidden = false; var b = $('manualBox'); b.value = text; b.focus(); b.select(); toast('Copy blocked here. Text is selected below.'); }
+    function legacy() {
+      try {
+        var ta = document.createElement('textarea'); ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+        document.body.appendChild(ta); ta.select(); var ok = document.execCommand('copy'); ta.remove();
+        if (ok) { toast(okMsg || 'Copied'); return true; }
+      } catch (e) {}
+      return false;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast(okMsg || 'Copied'); }, function () { if (!legacy()) manual(); });
+    else if (!legacy()) manual();
+  }
+
+  /* ===== Inputs and saved settings ===== */
+  function radio(name) { var r = document.querySelector('input[name="' + name + '"]:checked'); return r ? r.value : ''; }
+  var FIELDS = ['biz', 'me', 'sell', 'offer', 'until', 'claim', 'wa', 'base'];
+  function saveSettings() {
+    try {
+      var o = {}; FIELDS.forEach(function (id) { o[id] = $(id).value; });
+      o.tone = radio('tone'); o.lang = radio('lang'); o.size = radio('size'); o.optout = $('optout').checked; o.usePage = $('usePage').checked;
+      localStorage.setItem('dwm:v2', JSON.stringify(o));
+    } catch (e) {}
+  }
+  var hadSaved = false;
+  function loadSettings() {
+    try {
+      var o = JSON.parse(localStorage.getItem('dwm:v2') || 'null'); if (!o) return; hadSaved = true;
+      FIELDS.forEach(function (id) { if (typeof o[id] === 'string') $(id).value = o[id]; });
+      ['tone', 'lang', 'size'].forEach(function (n) { var el = document.querySelector('input[name="' + n + '"][value="' + o[n] + '"]'); if (el) el.checked = true; });
+      $('optout').checked = !!o.optout; $('usePage').checked = !!o.usePage;
+    } catch (e) {}
+  }
+  function toolBase() { return hosted ? location.origin + location.pathname : normBase($('base').value); }
+  function normBase(v) { v = String(v || '').trim(); if (!v) return ''; if (!/^https?:\/\//i.test(v)) v = 'https://' + v; return v.replace(/#.*$/, ''); }
+  function syncBaseUI() {
+    $('baseField').hidden = !$('usePage').checked;
+    if (hosted) $('baseHint').textContent = 'Customers open each wish page from this address. It was filled in for you.';
+  }
+  function getBiz() {
+    return {
+      name: $('biz').value, me: $('me').value, sell: $('sell').value, offer: $('offer').value, until: $('until').value, claim: $('claim').value.trim(),
+      wa: normalizePhone($('wa').value), tone: radio('tone'), lang: radio('lang'), size: radio('size'), optout: $('optout').checked,
+      base: $('usePage').checked ? normBase($('base').value) : ''
+    };
+  }
+  document.addEventListener('input', function (e) { if (e.target && FIELDS.indexOf(e.target.id) >= 0) saveSettings(); });
+  document.addEventListener('change', saveSettings);
+  $('usePage').addEventListener('change', function () { syncBaseUI(); if ($('usePage').checked && !$('base').value && hosted) $('base').value = location.origin + location.pathname; saveSettings(); });
+
+  var parsed = { rows: [], bad: [] };
+  function refreshStatus() {
+    parsed = parseCustomers($('paste').value);
+    var st = $('status'), is = $('issues'); st.innerHTML = ''; is.innerHTML = '';
+    if (!$('paste').value.trim()) return;
+    var ok = h('span', 'pill', parsed.rows.length + (parsed.rows.length === 1 ? ' valid customer' : ' valid customers')); st.appendChild(ok);
+    if (parsed.bad.length) {
+      st.appendChild(h('span', 'pill warn', parsed.bad.length + (parsed.bad.length === 1 ? ' row needs fixing' : ' rows need fixing')));
+      parsed.bad.slice(0, 6).forEach(function (b) { is.appendChild(h('li', '', 'Row ' + b.line + ': ' + b.reason + ' (' + b.text + ')')); });
+      if (parsed.bad.length > 6) is.appendChild(h('li', '', '...and ' + (parsed.bad.length - 6) + ' more'));
+    }
+  }
+  $('paste').addEventListener('input', refreshStatus);
+  $('sampleCust').addEventListener('click', function () { $('paste').value = SAMPLE_CUSTOMERS; refreshStatus(); toast('Sample customers loaded. Their numbers are fake.'); });
+  $('clearCust').addEventListener('click', function () { $('paste').value = ''; refreshStatus(); $('paste').focus(); });
+  $('sampleBiz').addEventListener('click', function () {
+    $('biz').value = 'Sharma Sweets'; $('me').value = 'Rajesh'; $('sell').value = 'sweets and gift boxes';
+    $('offer').value = '10% off on gift boxes'; $('until').value = '2026-11-12'; $('claim').value = 'DIYA';
+    saveSettings(); toast('Sample business filled in. Replace it with yours.');
+  });
+
+  /* ===== Results ===== */
+  var state = { items: [], shown: 0, lit: 0, salt: 0, biz: null, finaleDone: false, view: { shown: 12, q: '' } };
+  function setDiyaRow(total) { var shown = Math.min(total, 24), s = ''; state.shown = shown; state.lit = 0; for (var i = 0; i < shown; i++) s += diyaHTML(false); $('diyaRow').innerHTML = s; }
+  function sentCount() { return state.items.filter(function (x) { return x.sent; }).length; }
+  function updateProgress(launch) {
+    var total = state.items.length, sent = sentCount();
+    $('progText').textContent = sent + ' of ' + total + ' sent';
+    $('barFill').style.width = (total ? sent / total * 100 : 0) + '%';
+    var tgt = (sent === total && total) ? state.shown : (total <= 24 ? sent : Math.min(state.shown - 1, Math.round(sent * state.shown / total)));
+    var diyas = $('diyaRow').children, prev = state.lit;
+    for (var i = 0; i < diyas.length; i++) diyas[i].classList.toggle('lit', i < tgt);
+    if (launch && tgt > prev && diyas[tgt - 1] && $('sendmode').hidden) {
+      var rc = diyas[tgt - 1].getBoundingClientRect();
+      lantern(rc.left + rc.width / 2, rc.top + rc.height / 3);
+      burst(rc.left + rc.width / 2, rc.top, narrow ? 26 : 40, ['#ffd166', '#ff8a3d']);
+    }
+    state.lit = tgt;
+    $('progSub').textContent = (sent === total && total) ? 'All wishes sent. Shubh Deepavali!' : 'Light a diya for every wish you send';
+  }
+  function autoGrow(t) { t.style.height = 'auto'; t.style.height = Math.max(t.classList.contains('sm') ? 220 : 150, t.scrollHeight + 2) + 'px'; }
+  function limit() { return state.biz && state.biz.size === 'short' ? 78 : 125; }
+  function avatarInto(el, name) {
+    if (state.items.length > 80) { el.textContent = (String(name).trim()[0] || '?').toUpperCase(); return; }
+    el.innerHTML = rangoliSVG(name, { mini: true });
+  }
+  function payloadFor(it) { return greetingPayload(state.biz, { name: it.name, last: it.last, city: it.city }); }
+  function preview(t) { return String(t).replace(/\*/g, '').replace(/\s+/g, ' ').trim(); }
+
+  /* Text lives on the item; every place that shows it (row preview, open editor, send mode) is refreshed from here. */
+  function setText(i, text, source) {
+    var it = state.items[i]; if (!it) return; it.text = text;
+    var u = it.ui;
+    if (u) {
+      u.preview.textContent = preview(text);
+      if (u.ta) {
+        if (u.ta !== source) { u.ta.value = text; autoGrow(u.ta); }
+        u.wa.href = waLink(it.phone, text);
+        var n = wordCount(text); u.wc.textContent = n + ' words'; u.wc.className = n > limit() ? 'over' : '';
+      }
+    }
+    if (!$('sendmode').hidden && sm.i === i) { if ($('smText') !== source) { $('smText').value = text; autoGrow($('smText')); } $('smWa').href = waLink(it.phone, text); }
+  }
+  function setSent(i, val) {
+    var it = state.items[i]; if (!it) return;
+    it.sent = !!val; if (it.paint) it.paint();
+    updateProgress(!!val);
+    if (val && sentCount() === state.items.length && !state.finaleDone) { state.finaleDone = true; setTimeout(finale, 350); }
+    if (!val) state.finaleDone = false;
+  }
+  function closeBodies() {
+    state.items.forEach(function (x) {
+      if (x.ui && x.ui.body) { x.ui.body.remove(); x.ui.body = null; x.ui.ta = x.ui.wa = x.ui.wc = x.ui.mk = null; x.ui.el.classList.remove('open'); x.ui.edit.textContent = 'Edit'; x.ui.edit.setAttribute('aria-expanded', 'false'); }
+    });
+  }
+  function openBody(i) {
+    var it = state.items[i], u = it.ui; if (!u) return;
+    var body = h('div', 'item-body');
+    var bub = h('div', 'bubble'), ta = h('textarea'); ta.value = it.text; ta.id = 'msg-' + i; ta.setAttribute('aria-label', 'Message for ' + it.name);
+    bub.appendChild(ta); bub.appendChild(h('span', 'tick', 'now \u2713\u2713'));
+    var meta = h('div', 'card-meta'), wc = h('span'); meta.appendChild(wc); meta.appendChild(h('span', '', 'You can edit this message'));
+    var acts = h('div', 'card-actions');
+    var wa = h('a', 'btn btn-wa', 'Open in WhatsApp'); wa.target = '_blank'; wa.rel = 'noopener noreferrer';
+    var cp = h('button', 'btn small', 'Copy'); cp.type = 'button';
+    var mk = h('button', 'btn small', it.sent ? 'Undo sent' : 'Mark sent'); mk.type = 'button';
+    var pv = h('button', 'btn small btn-ghost', 'Preview wish page'); pv.type = 'button';
+    var rw = h('button', 'btn small btn-ghost', 'Rewrite'); rw.type = 'button';
+    [wa, cp, mk, pv, rw].forEach(function (b) { acts.appendChild(b); });
+    body.appendChild(bub); body.appendChild(meta); body.appendChild(acts);
+    u.el.appendChild(body); u.body = body; u.ta = ta; u.wa = wa; u.wc = wc; u.mk = mk;
+    u.el.classList.add('open'); u.edit.textContent = 'Close'; u.edit.setAttribute('aria-expanded', 'true');
+    ta.addEventListener('input', function () { setText(i, ta.value, ta); autoGrow(ta); });
+    cp.addEventListener('click', function () { copyText(it.text, 'Message copied for ' + it.name); });
+    mk.addEventListener('click', function () { setSent(i, !it.sent); });
+    pv.addEventListener('click', function () { openGreeting(payloadFor(it), true); });
+    wa.addEventListener('click', function () { var r = wa.getBoundingClientRect(); burst(r.left + r.width / 2, r.top, 24, ['#ffd166', '#25d366']); });
+    rw.addEventListener('click', function () {
+      it.salt = (it.salt || 0) + 1;
+      var cc = { name: it.name, phone: it.phone, last: it.last, city: it.city, link: state.biz.base ? makeGreetingUrl(state.biz.base, state.biz, it) : '' };
+      setText(i, waText(buildWithinLimit(cc, state.biz, i, state.salt + it.salt * 5))); toast('Rewritten');
+    });
+    setText(i, it.text); autoGrow(ta);
+  }
+  function renderRow(item, i) {
+    var el = h('article', 'item'); el.style.animationDelay = Math.min(i % 12, 12) * 0.03 + 's';
+    var top = h('div', 'item-top'), av = h('div', 'avatar'); avatarInto(av, item.name);
+    var who = h('div', 'who'), line = h('div', 'who-line');
+    line.appendChild(h('strong', '', item.name)); line.appendChild(h('small', '', prettyPhone(item.phone))); line.appendChild(h('span', 'sent-chip', 'Sent'));
+    var pv = h('span', 'preview', preview(item.text)); who.appendChild(line); who.appendChild(pv);
+    var acts = h('div', 'item-actions');
+    var send = h('button', 'btn small btn-gold', 'Send'); send.type = 'button';
+    var edit = h('button', 'btn small btn-ghost', 'Edit'); edit.type = 'button'; edit.setAttribute('aria-expanded', 'false');
+    acts.appendChild(send); acts.appendChild(edit);
+    top.appendChild(av); top.appendChild(who); top.appendChild(acts); el.appendChild(top);
+    item.ui = { el: el, preview: pv, edit: edit, body: null, ta: null, wa: null, wc: null, mk: null };
+    item.paint = function () { el.classList.toggle('sent', !!item.sent); send.textContent = item.sent ? 'Resend' : 'Send'; if (item.ui && item.ui.mk) item.ui.mk.textContent = item.sent ? 'Undo sent' : 'Mark sent'; };
+    send.addEventListener('click', function () { openSend(i); });
+    edit.addEventListener('click', function () { var was = !!item.ui.body; closeBodies(); if (!was) openBody(i); });
+    item.paint();
+    return el;
+  }
+  function renderList() {
+    var box = $('cards'), v = state.view; box.innerHTML = '';
+    state.items.forEach(function (it) { it.ui = null; });
+    var q = v.q.trim().toLowerCase(), idx = [];
+    state.items.forEach(function (it, i) { if (!q || it.name.toLowerCase().indexOf(q) >= 0 || it.phone.indexOf(q.replace(/\D/g, '') || '\u0000') >= 0) idx.push(i); });
+    idx.slice(0, v.shown).forEach(function (i) { box.appendChild(renderRow(state.items[i], i)); });
+    var more = $('moreBtn'); more.hidden = idx.length <= v.shown; more.textContent = 'Show ' + Math.min(12, idx.length - v.shown) + ' more';
+    $('listTitle').textContent = 'Your messages (' + state.items.length + ')';
+    $('search').hidden = state.items.length <= 8;
+    if (!idx.length && q) box.appendChild(h('p', 'hint', 'No customer matches that search.'));
+  }
+  function renderAll() { state.view = { shown: 12, q: '' }; $('search').value = ''; renderList(); setDiyaRow(state.items.length); updateProgress(false); }
+  $('moreBtn').addEventListener('click', function () { state.view.shown += 12; renderList(); });
+  $('search').addEventListener('input', function () { state.view.q = $('search').value; state.view.shown = 12; renderList(); });
+
+  $('gen').addEventListener('click', function () {
+    refreshStatus();
+    var biz = getBiz();
+    function need(el, msg) { toast(msg); el.focus(); el.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); }
+    if (!biz.name.trim()) return need($('biz'), 'Add your business name first');
+    if (!parsed.rows.length) return need($('paste'), 'Add at least one customer first');
+    if ($('usePage').checked && !biz.base) return need($('base'), 'Add the hosted address, or turn off the wish page link');
+    state.biz = biz; state.salt = 0; state.finaleDone = false;
+    var texts = generateAll(parsed.rows, biz, 0);
+    state.items = parsed.rows.map(function (r, i) { return { name: r.name, phone: r.phone, last: r.last, city: r.city, text: texts[i], sent: false, salt: 0 }; });
+    $('results').hidden = false; renderAll(); $('finale').hidden = true;
+    var rect = $('gen').getBoundingClientRect(), cx = rect.left + rect.width / 2;
+    burst(cx, rect.top - 40, narrow ? 60 : 100, ['#ffd166', '#fff4d6']);
+    setTimeout(function () { burst(W * 0.22, H * 0.28, null, ['#ff4d9d', '#ff8a3d']); }, 280);
+    setTimeout(function () { burst(W * 0.78, H * 0.24, null, ['#b388ff', '#ff4d9d', '#fff4d6']); }, 520);
+    setTimeout(function () { $('results').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }, 450);
+  });
+  $('regenAll').addEventListener('click', function () {
+    if (!state.items.length) return;
+    state.salt += 1; state.biz = getBiz();
+    var texts = generateAll(state.items, state.biz, state.salt);
+    state.items.forEach(function (it, i) { if (!it.sent) setText(i, texts[i]); });
+    toast('Unsent messages rewritten');
+  });
+  $('copyAll').addEventListener('click', function () { copyText(state.items.map(function (it) { return it.name + ' (' + prettyPhone(it.phone) + ')\n' + it.text; }).join('\n\n------\n\n'), 'All messages copied'); });
+  $('copyCsv').addEventListener('click', function () { copyText(toCSV(state.items), 'CSV copied. Paste it into Excel or Sheets.'); });
+
+  /* ===== Send mode ===== */
+  var sm = { i: 0, pending: null, last: null };
+  function nextUnsent(from) { var n = state.items.length; for (var k = 1; k <= n; k++) { var j = (from + k) % n; if (!state.items[j].sent) return j; } return -1; }
+  function paintSend() {
+    var it = state.items[sm.i], n = state.items.length; if (!it) return;
+    $('smProg').textContent = (sm.i + 1) + ' of ' + n + ' · ' + sentCount() + ' sent';
+    $('smBar').style.width = (n ? sentCount() / n * 100 : 0) + '%';
+    avatarInto($('smAvatar'), it.name); $('smName').textContent = it.name; $('smPhone').textContent = prettyPhone(it.phone);
+    var t = $('smText'); t.classList.add('sm'); t.value = it.text; autoGrow(t); $('smWa').href = waLink(it.phone, it.text);
+    $('smSent').textContent = it.sent ? 'Already sent, next' : 'I sent it, next';
+  }
+  function openSend(i) { sm.i = i; sm.pending = null; $('sendmode').hidden = false; document.body.style.overflow = 'hidden'; paintSend(); $('sendmode').scrollTop = 0; }
+  function closeSend() { $('sendmode').hidden = true; document.body.style.overflow = ''; sm.pending = null; }
+  function advance() {
+    if (sentCount() === state.items.length) { closeSend(); return; }
+    sm.i = nextUnsent(sm.i); paintSend(); $('sendmode').scrollTop = 0;
+  }
+  $('startSend').addEventListener('click', function () { if (!state.items.length) return; var f = state.items.findIndex(function (x) { return !x.sent; }); openSend(f < 0 ? 0 : f); });
+  $('smClose').addEventListener('click', closeSend);
+  $('smText').addEventListener('input', function () { setText(sm.i, $('smText').value, $('smText')); autoGrow($('smText')); });
+  $('smWa').addEventListener('click', function (e) { sm.pending = sm.i; var r = e.currentTarget.getBoundingClientRect(); burst(r.left + r.width / 2, r.top, 28, ['#ffd166', '#25d366']); });
+  $('smSent').addEventListener('click', function () { setSent(sm.i, true); sm.last = sm.i; $('smUndo').hidden = false; sm.pending = null; advance(); });
+  $('smSkip').addEventListener('click', function () { sm.i = (sm.i + 1) % state.items.length; sm.pending = null; paintSend(); });
+  $('smPrev').addEventListener('click', function () { sm.i = (sm.i - 1 + state.items.length) % state.items.length; sm.pending = null; paintSend(); });
+  $('smUndo').addEventListener('click', function () { if (sm.last == null) return; setSent(sm.last, false); sm.i = sm.last; sm.last = null; $('smUndo').hidden = true; paintSend(); });
+  $('smPreview').addEventListener('click', function () { openGreeting(payloadFor(state.items[sm.i]), true); });
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden || sm.pending === null || $('sendmode').hidden) return;
+    var i = sm.pending; sm.pending = null; var it = state.items[i]; if (!it) return;
+    setSent(i, true); sm.last = i; $('smUndo').hidden = false; toast(it.name + ' marked sent'); advance();
+  });
+
+  /* ===== Finale ===== */
+  var finaleTimers = [];
+  function stopFinale() { finaleTimers.forEach(clearTimeout); finaleTimers = []; $('finale').hidden = true; }
+  function finale() {
+    closeSend();
+    var n = state.items.length;
+    $('finaleSub').textContent = 'All ' + n + (n === 1 ? ' wish is' : ' wishes are') + ' sent. May your business shine this year.';
+    var base = toolBase();
+    $('finaleShare').href = 'https://wa.me/?text=' + enc('I just sent ' + n + ' personal Diwali wishes, each with its own fireworks page. 🪔 Try the Diwali Wish Machine, it is free' + (base ? ': ' + base : '.'));
+    $('finale').hidden = false; $('finaleClose').focus();
+    for (var i = 0; i < 16; i++) {
+      (function (i) { finaleTimers.push(setTimeout(function () {
+        if (i % 3 === 0) rocket(W * (0.12 + Math.random() * 0.76), H * (0.12 + Math.random() * 0.3));
+        else burst(W * (0.1 + Math.random() * 0.8), H * (0.12 + Math.random() * 0.4), null);
+      }, 200 + i * 430)); })(i);
+    }
+  }
+  $('finaleClose').addEventListener('click', stopFinale);
+
+  /* ===== Wish page ===== */
+  var GT = {
+    en: { eyebrow: 'A Diwali surprise for', hint: 'Tap the diya to light it', hear: 'Hear my wish', gift: 'Tap to unwrap your gift', giftLabel: 'Your Diwali gift', until: 'Valid till {d}', claim: 'Claim on WhatsApp', note: 'Reply {k} on WhatsApp to claim it.', back: 'Send a wish back', make: 'Own a business? Make a wish page like this for your customers, free.', makeBtn: 'Make yours', share: 'Share on WhatsApp', lit: 'Light the diya' },
+    hinglish: { eyebrow: 'Aapke liye Diwali ka surprise', hint: 'Diya jalane ke liye tap karein', hear: 'Meri wish suniye', gift: 'Gift kholne ke liye tap karein', giftLabel: 'Aapka Diwali gift', until: '{d} tak valid', claim: 'WhatsApp par claim karein', note: 'Claim karne ke liye WhatsApp par {k} likhkar reply karein.', back: 'Wapas wish bhejein', make: 'Business hai? Apne customers ke liye aisa wish page banayein, free.', makeBtn: 'Apna banayein', share: 'WhatsApp par share karein', lit: 'Diya jalayein' },
+    hi: { eyebrow: 'आपके लिए दिवाली का सरप्राइज़', hint: 'दीया जलाने के लिए टैप करें', hear: 'मेरी शुभकामना सुनिए', gift: 'तोहफ़ा खोलने के लिए टैप करें', giftLabel: 'आपका दिवाली तोहफ़ा', until: '{d} तक मान्य', claim: 'WhatsApp पर पाएँ', note: 'पाने के लिए WhatsApp पर {k} लिखकर जवाब दें।', back: 'जवाबी शुभकामना भेजें', make: 'बिज़नेस है? अपने ग्राहकों के लिए ऐसा विश पेज बनाइए, मुफ़्त।', makeBtn: 'अपना बनाइए', share: 'WhatsApp पर शेयर करें', lit: 'दीया जलाइए' }
+  };
+  var G = { g: null, P: null, preview: false, lit: false, timers: [], typing: null };
+  function clearGreetTimers() { G.timers.forEach(clearTimeout); G.timers = []; clearInterval(G.typing); G.typing = null; try { if (window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {} }
+
+  function openGreeting(g, preview) {
+    clearGreetTimers();
+    var P = greetingParts(g), T = GT[P.lang];
+    G.g = g; G.P = P; G.preview = !!preview; G.lit = false;
+    $('gEyebrow').textContent = T.eyebrow; $('gEyebrow').classList.remove('g-hidden');
+    $('gName').textContent = P.display; $('gName').classList.remove('g-hidden');
+    var gd = $('gDiya'); gd.className = 'g-diya'; gd.innerHTML = diyaHTML(false); gd.setAttribute('aria-label', T.lit);
+    $('gHint').hidden = false; $('gHint').textContent = T.hint;
+    $('gBody').hidden = true; $('gWish').textContent = '';
+    var lamps = ''; for (var i = 0; i < 7; i++) lamps += diyaHTML(false); $('gLamps').innerHTML = lamps;
+    $('gRangoli').innerHTML = rangoliSVG(P.display + P.first, { anim: true, sw: 1.1 });
+    $('gPreview').hidden = !preview;
+    $('gGift').hidden = true; $('gOffer').hidden = true;
+    $('greet').hidden = false; $('greet').scrollTop = 0;
+    document.body.classList.add('greet-on'); document.body.style.overflow = 'hidden';
+    $('gDiya').focus();
+  }
+  function closeGreeting() { clearGreetTimers(); $('greet').hidden = true; document.body.classList.remove('greet-on'); if ($('sendmode').hidden) document.body.style.overflow = ''; }
+
+  function lightDiya() {
+    if (G.lit || !G.P) return; G.lit = true;
+    var P = G.P, d = $('gDiya'), r = d.getBoundingClientRect();
+    d.classList.add('lit'); var dd = d.querySelector('.diya'); if (dd) dd.classList.add('lit');
+    $('gHint').hidden = true; ripple(r.left + r.width / 2, r.top + r.height / 2); petalShower(narrow ? 22 : 38);
+    var lamps = $('gLamps').children;
+    for (var i = 0; i < lamps.length; i++) (function (i) { G.timers.push(setTimeout(function () { lamps[i].classList.add('lit'); }, 300 + i * 190)); })(i);
+    if (reduced) { showBody(); return; }
+    var go = function () {
+      nameFireworks(P.display, $('gName'));
+      G.timers.push(setTimeout(function () { $('gName').classList.add('g-hidden'); $('gEyebrow').classList.add('g-hidden'); }, 1500));
+    };
+    var done = false, once = function () { if (!done) { done = true; go(); } };
+    try { if (document.fonts && document.fonts.load) document.fonts.load('80px "Yatra One"', P.display).then(once, once); } catch (e) {}
+    G.timers.push(setTimeout(once, 700));
+    G.timers.push(setTimeout(showBody, 4600));
+  }
+  function showBody() {
+    var P = G.P, g = G.g, T = GT[P.lang];
+    if (!P || $('greet').hidden) return;
+    $('gHead').textContent = P.headline; $('gThanks').textContent = P.thanks; $('gFrom').textContent = P.sign ? '— ' + P.sign : '';
+    $('gBody').hidden = false;
+    var wish = P.wish, el = $('gWish');
+    if (reduced) el.textContent = wish;
+    else { var k = 0; clearInterval(G.typing); G.typing = setInterval(function () { k += 2; el.textContent = wish.slice(0, k); if (k >= wish.length) { clearInterval(G.typing); G.typing = null; } }, 24); }
+    var speakOk = false; try { speakOk = !!(window.speechSynthesis && window.SpeechSynthesisUtterance); } catch (e) {}
+    $('gHear').hidden = !speakOk; $('gHear').textContent = T.hear;
+    if (P.offer) { $('gGift').hidden = false; $('gUnwrapText').textContent = T.gift; } else { $('gGift').hidden = true; $('gOffer').hidden = true; }
+    $('gOffer').hidden = true;
+    var wb = $('gWishBack');
+    if (g.p) { wb.hidden = false; wb.textContent = T.back; wb.href = 'https://wa.me/' + g.p + '?text=' + enc('Shubh Deepavali to you and everyone at ' + (P.biz || 'your team') + '! 🪔'); } else wb.hidden = true;
+    var base = toolBase();
+    $('gMakeText').textContent = T.make; var mk = $('gMake'); mk.textContent = T.makeBtn; if (base) mk.href = base; else mk.removeAttribute('href');
+    var fw = $('gForward'); fw.textContent = T.share;
+    fw.href = 'https://wa.me/?text=' + enc('Look at the Diwali wish I got! 🪔 Make wish pages for your own customers or family, free' + (base ? ': ' + base : '.'));
+    $('gCta').hidden = false;
+    G.timers.push(setTimeout(function () { var b = $('gBody'); $('greet').scrollTo ? $('greet').scrollTo({ top: Math.max(0, b.offsetTop - 70), behavior: reduced ? 'auto' : 'smooth' }) : ($('greet').scrollTop = b.offsetTop - 70); }, reduced ? 250 : 1500));
+  }
+  function unwrap() {
+    var P = G.P, g = G.g, T = GT[P.lang], r = $('gUnwrap').getBoundingClientRect();
+    $('gGift').hidden = true; $('gOffer').hidden = false;
+    $('gOfferLabel').textContent = T.giftLabel; $('gOfferText').textContent = P.offer;
+    $('gOfferUntil').textContent = P.until ? T.until.replace('{d}', P.until) : '';
+    $('gOfferUntil').hidden = !P.until;
+    burst(r.left + r.width / 2, r.top + r.height / 2, narrow ? 50 : 80, ['#ffd166', '#ff4d9d', '#fff4d6']); petalShower(14);
+    var cl = $('gClaim'), note = $('gClaimNote');
+    if (g.p) {
+      cl.hidden = false; cl.textContent = T.claim;
+      cl.href = 'https://wa.me/' + g.p + '?text=' + enc((P.claim ? P.claim + '\n' : '') + 'Shubh Deepavali! This is ' + P.first + '. I opened my gift: ' + P.offer);
+      note.hidden = true;
+    } else { cl.hidden = true; if (P.claim) { note.hidden = false; note.textContent = T.note.replace('{k}', P.claim); } else note.hidden = true; }
+  }
+  $('gDiya').addEventListener('click', lightDiya);
+  $('gUnwrap').addEventListener('click', unwrap);
+  $('gClose').addEventListener('click', closeGreeting);
+  $('gHear').addEventListener('click', function () {
+    try {
+      var P = G.P, u = new SpeechSynthesisUtterance(P.display + '. ' + P.headline + ' ' + P.wish);
+      u.lang = P.lang === 'en' ? 'en-IN' : 'hi-IN'; u.rate = 0.92; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+    } catch (e) { toast('Voice is not available on this device'); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (!$('finale').hidden) stopFinale();
+    else if (!$('greet').hidden && G.preview) closeGreeting();
+    else if (!$('sendmode').hidden) closeSend();
+  });
+
+  /* ===== Boot ===== */
+  loadSettings();
+  var DEFAULT_BASE = 'https://invisiblecto.github.io/DIWALI-WISH-MACHINE/';
+  if (!hosted) { $('usePage').checked = true; if (!$('base').value) $('base').value = DEFAULT_BASE; }
+  if (!hadSaved && hosted) { $('usePage').checked = true; }
+  if ($('usePage').checked && !$('base').value && hosted) $('base').value = location.origin + location.pathname;
+  syncBaseUI(); refreshStatus();
+  function route() {
+    var g = parseGreetingHash(location.hash);
+    if (g) { document.body.classList.add('recipient'); openGreeting(g, false); }
+  }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+
+</body></html>
